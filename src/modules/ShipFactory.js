@@ -43,6 +43,7 @@ export const ShipFactory = (() => {
       length,
       hp,
       sunk,
+      shipID,
       hit() {
         hp = hp -1;
         if (hp === 0) { sunk = true };
