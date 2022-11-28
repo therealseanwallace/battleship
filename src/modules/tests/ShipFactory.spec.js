@@ -1,11 +1,11 @@
 import { ShipFactory } from "@/modules/ShipFactory"
 
 describe("ShipFactory", () => {
-  const testBattleship = ShipFactory(6);
-  const testCruiser = ShipFactory(4);
-  const testDestroyer = ShipFactory(3);
-  const testFrigate = ShipFactory(2);
-  const sinkTest = ShipFactory(1);
+  const testBattleship = ShipFactory.ShipFactory(6);
+  const testCruiser = ShipFactory.ShipFactory(4);
+  const testDestroyer = ShipFactory.ShipFactory(3);
+  const testFrigate = ShipFactory.ShipFactory(2);
+  const sinkTest = ShipFactory.ShipFactory(1);
   test("Returns an object", () => {
     expect(typeof testBattleship).toBe("object");
   });
