@@ -1,15 +1,11 @@
-import { ShipFactory } from "@/modules/ShipFactory"
+import { GameBoardFactory } from "@/modules/GameBoardFactory";
 
-describe("ShipFactory", () => {
-  const testBattleship = ShipFactory(6);
-  const testCruiser = ShipFactory(4);
-  const testDestroyer = ShipFactory(3);
-  const testFrigate = ShipFactory(2);
-  const sinkTest = ShipFactory(1);
+describe("Game Board", () => {
+  const gb = GameBoardFactory();
   test("Returns an object", () => {
-    expect(typeof testBattleship).toBe("object");
+    expect(typeof gb).toBe("object");
   });
-  test('Battleship has correct attributes', () => {
+  /*test('Battleship has correct attributes', () => {
     expect(testBattleship.type).toStrictEqual('Battleship');
     expect(testBattleship.length).toStrictEqual(6);
     expect(testBattleship.hp).toStrictEqual(6);
@@ -34,5 +30,5 @@ describe("ShipFactory", () => {
   });
   test("Hit method works correctly when ship has 1hp", () => {
     expect(sinkTest.hit()).toStrictEqual([0, true]);
-  });
+  });*/
 });

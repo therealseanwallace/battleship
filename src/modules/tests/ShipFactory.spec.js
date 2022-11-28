@@ -5,10 +5,11 @@ describe("ShipFactory", () => {
   const testCruiser = ShipFactory(4);
   const testDestroyer = ShipFactory(3);
   const testFrigate = ShipFactory(2);
+  const sinkTest = ShipFactory(1);
   test("Returns an object", () => {
     expect(typeof testBattleship).toBe("object");
   });
-  test('Object has correct attributes', () => {
+  test('Battleship has correct attributes', () => {
     expect(testBattleship.type).toStrictEqual('Battleship');
     expect(testBattleship.length).toStrictEqual(6);
     expect(testBattleship.hp).toStrictEqual(6);
@@ -29,10 +30,9 @@ describe("ShipFactory", () => {
     expect(testFrigate.sunk).toStrictEqual(false);
   });
   test("Hit method works correctly", () => {
-    
+    expect(testBattleship.hit()).toStrictEqual([5, false]);
   });
-  test("Hit method works correctly", () => {
-    
+  test("Hit method works correctly when ship has 1hp", () => {
+    expect(sinkTest.hit()).toStrictEqual([0, true]);
   });
-  
 });
