@@ -2,8 +2,14 @@ export const ShipFactory = (shipType) => {
   let type;
   let length;
   let hp;
-  const sunk = false;
+  let sunk = false;
   switch (shipType) {
+    case 1: 
+      type = 'Sink test';
+      length = 6;
+      hp = 1;
+      break;
+
     case 2:
       type = 'Frigate';
       length = 2;
@@ -33,5 +39,14 @@ export const ShipFactory = (shipType) => {
     length,
     hp,
     sunk,
+    hit() {
+      hp = hp -1;
+      if (hp === 0) { sunk = true };
+      return [hp, this.checkSunk()];
+    },
+    checkSunk() {
+      return sunk;
+    },
+    
   }
 }
