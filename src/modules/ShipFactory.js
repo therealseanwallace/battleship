@@ -44,15 +44,14 @@ export const ShipFactory = (() => {
       hp,
       sunk,
       shipID,
-      hit() {
-        hp = hp -1;
-        if (hp === 0) { sunk = true };
-        return [hp, this.checkSunk()];
-      },
       checkSunk() {
         return sunk;
       },
-      
+      hit() {
+        hp = hp -1;
+        if (hp === 0) { sunk = true };
+        return [true, hp, this.checkSunk()];
+      },
     }
   }
   return { ShipFactory }

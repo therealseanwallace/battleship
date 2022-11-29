@@ -29,12 +29,33 @@ export const GameBoardFactory = () => {
     return array;
   };
 
-  const placeShipOnBoard = () => {};
-
   class Board {
     constructor() {
       this.board = buildBoard();
       this.shipArray = [];
+    }
+    
+    getShip(ID) {
+      // Toops through this.shipArray, checking for and returning the 
+      // object with the corresponding ID.
+      const array = this.shipArray;
+      for (let i = 0; i < array.length; i++) {
+        const element = array[i];
+        if (element.shipID = ID) {
+          return element;
+        };
+        
+      }
+    }
+
+    receiveAttack(x, y) {
+    // we look up the given square. if there is an occupant, we get the ship's
+    // object using getShip() and call its hit() method
+    console.log('receiving attack! this.board[x][y] =', this.board[x][y]);
+      if (this.board[x][y].occupant !== null) {
+        const ship = this.getShip(!this.board[x][y].occupant);
+        return ship.hit();
+      }
     }
 
     checkForOccupants(x, y, horizVert, length) {
@@ -62,6 +83,7 @@ export const GameBoardFactory = () => {
 
       newShip.orientation = horizVert;
       const newShipLength = newShip.length;
+      this.shipArray.push(newShip);
 
       // the following if statements check that this is a legal ship placement
       if (horizVert === 0) {
@@ -104,7 +126,6 @@ export const GameBoardFactory = () => {
       }
       return result;
     }
-    receiveAttack() {}
   }
 
   const gameBoard = new Board();
