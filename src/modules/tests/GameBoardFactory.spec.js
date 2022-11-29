@@ -1,5 +1,4 @@
 import { GameBoardFactory } from "@/modules/GameBoardFactory";
-import { PlayerFactory } from "@/modules/PlayerFactory";
 
 const gb = GameBoardFactory();
 
@@ -59,14 +58,4 @@ describe("Attacking", () => {
   test("Returns false if there are surviving ships", () => {
     expect(gb.gameBoard.checkFleetSunk()).toStrictEqual(false);
   });
-});
-
-describe("Players", () => {
-  // Players must be able to attack the enemy game board
-  test("Players must be able to attack a game board", () => {
-    expect(gb.gameBoard.player1.attack(0, 5)).toStrictEqual([true, 5, false]);
-  });
-  // The attack method should specify coords and which player is attacking
-
-  // Computer player must be able to make a random play
 });
