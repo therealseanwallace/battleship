@@ -1,4 +1,5 @@
 import { ShipFactory } from "./ShipFactory";
+import { players } from "./PlayerFactory";
 
 export const GameBoardFactory = () => {
   class Square {
