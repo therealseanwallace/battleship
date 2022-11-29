@@ -1,22 +1,20 @@
 import { ShipFactory } from "./ShipFactory";
 
 export const GameBoardFactory = () => {
-
   class Square {
     constructor(x, y) {
       x = x || 0; // converts falsey values to 0 (in this case, NaN)
       this.xy = [x, y];
-      this.populated = false;
       this.occupant = null;
       this.hit = null;
     }
     placeShipOnSquare(shipID) {
       this.occupant = shipID;
-      //console.log('ship placed on square! this.occupant is', this.occupant);
     }
   }
-  
+
   const buildBoard = () => {
+    // build a 2d array representing a 10x10 game board
     const array = [];
     for (let i = 0; i < 10; i += 1) {
       const x = i;
@@ -28,14 +26,10 @@ export const GameBoardFactory = () => {
       }
       array.push(xArray);
     }
-  return array;
+    return array;
   };
-  
-  
 
-  const placeShipOnBoard = () => {
-    
-  }
+  const placeShipOnBoard = () => {};
 
   class Board {
     constructor() {
@@ -43,52 +37,77 @@ export const GameBoardFactory = () => {
       this.shipArray = [];
     }
 
+    checkForOccupants(x, y, horizVert, length) {
+      if (horizVert === 0) {
+        for (let i = 0; i < length; i++) {
+          const element = this.board[x + i][y];
+          if (element.occupant !== null) {
+            return true;
+          }
+        }
+      } else {
+        for (let i = 0; i < length; i++) {
+          const element = this.board[x][y + i];
+          if (element.occupant !== null) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
     placeShipOnBoard(x, y, horizVert, shipType) {
-      // console.log('this is', this)
       // make a new ship according to shipType
       const newShip = ShipFactory.ShipFactory(shipType);
+
+      newShip.orientation = horizVert;
       const newShipLength = newShip.length;
-      // check that this is a legal ship placement
+
+      // the following if statements check that this is a legal ship placement
       if (horizVert === 0) {
         if (x + newShipLength > 9) {
-          return ('Error. Illegal move')
+          return "Error! Can't place ship out of bounds!";
         }
       } else {
         if (y + newShipLength > 9) {
-          return ('Error. Illegal move')
+          return "Error! Can't place ship out of bounds!";
         }
       }
-      
-      // get the length of newShip and loop through (x * length) squares in
-      // the directtion indicated by horizVert, modifying their occupant
-      // attributes accordingly with newShip's ID
-      
+      console.log(
+        "this.checkForOccupants(x, y, horizVert, newShipLength =",
+        this.checkForOccupants(x, y, horizVert, newShipLength)
+      );
+      if (this.checkForOccupants(x, y, horizVert, newShipLength)) {
+        return "Error! Can't place a ship on top of another ship!";
+      }
+
       const result = [];
+
+      // loop through newShipLength squares in
+      // the direction indicated by horizVert, modifying their occupant
+      // attributes according to newShip's ID
+
       for (let i = 0; i < newShipLength; i++) {
-        if (horizVert === 0) {
+        if (newShip.orientation === 0) {
+          // i.e. if this ship is placed horizontally
           this.board[x + i][y].placeShipOnSquare(newShip.shipID);
-          result.push([x + i, y]);
-          /*if (this.board[x + i][y].occupant === newShip.shipID) {
+          if (this.board[x + i][y].occupant === newShip.shipID) {
             result.push([x + i, y]);
-          }*/
+          }
         } else {
+          // the ship is placed vertically
           this.board[x][y + i].placeShipOnSquare(newShip.shipID);
-          result.push([x, y + i])
-          /*if (this.board[x][y + i].occupant === newShip.shipID) {
-            result.push([x][y + i]);
-          }*/
-        } 
+          if (this.board[x][y + i].occupant === newShip.shipID) {
+            result.push([x, y + i]);
+          }
+        }
       }
       return result;
-      
-
     }
+    receiveAttack() {}
   }
 
-  const gameBoard = new Board;
-  
-  
-  
+  const gameBoard = new Board();
 
   return { gameBoard };
 };
