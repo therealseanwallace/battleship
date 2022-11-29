@@ -45,13 +45,15 @@ describe("Placing ships", () => {
   });
 });
 
-describe("Attacking ships", () => {
-  // We need a function on the board that will take a hit, check
-  // the board array to see if that was a hit. If a hit is detected,
-  // it should call the hit method on the relevant ship and return 
-  // true, the new hp of the ship, and whether the ship has been sunk
+describe("Attacking", () => {
   test("Hitting the test battleship returns correct result", () => {
     expect(gb.gameBoard.receiveAttack(0, 0)).toStrictEqual([true, 5, false]);
+  });
+  test("Hitting an empty square returns correct result", () => {
+    expect(gb.gameBoard.receiveAttack(6, 6)).toStrictEqual(false);
+  });
+  test("Returns false if there are surviving ships", () => {
+    expect(gb.gameBoard.checkFleetSunk()).toStrictEqual(false);
   });
   
 });

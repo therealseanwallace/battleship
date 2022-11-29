@@ -6,7 +6,7 @@ export const GameBoardFactory = () => {
       x = x || 0; // converts falsey values to 0 (in this case, NaN)
       this.xy = [x, y];
       this.occupant = null;
-      this.hit = null;
+      this.hit = false;
     }
     placeShipOnSquare(shipID) {
       this.occupant = shipID;
@@ -34,27 +34,44 @@ export const GameBoardFactory = () => {
       this.board = buildBoard();
       this.shipArray = [];
     }
-    
+
+    checkFleetSunk() {
+      // Loops through this.shipArray, checking each ships .sunk property. If
+      // any unsunk ship is found, returns false - otherwise, returns true.
+      const array = this.shipArray;
+      let sunk = true;
+      for (let i = 0; i < array.length; i++) {
+        const ship = array[i];
+        if (!ship.sunk) {
+          return false;
+        }
+      }
+      return true;
+    }
+
     getShip(ID) {
-      // Toops through this.shipArray, checking for and returning the 
+      // Loops through this.shipArray, checking for and returning the
       // object with the corresponding ID.
       const array = this.shipArray;
       for (let i = 0; i < array.length; i++) {
-        const element = array[i];
-        if (element.shipID = ID) {
-          return element;
-        };
-        
+        const ship = array[i];
+        if ((ship.shipID = ID)) {
+          return ship;
+        }
       }
     }
 
     receiveAttack(x, y) {
-    // we look up the given square. if there is an occupant, we get the ship's
-    // object using getShip() and call its hit() method
-    console.log('receiving attack! this.board[x][y] =', this.board[x][y]);
+      // we look up the given square. if there is an occupant, we get the ship's
+      // object using getShip() and call its hit() method
+      console.log("receiving attack! this.board[x][y] =", this.board[x][y]);
       if (this.board[x][y].occupant !== null) {
         const ship = this.getShip(!this.board[x][y].occupant);
+        this.board[x][y].hit = true;
         return ship.hit();
+      } else {
+        this.board[x][y].hit = true;
+        return !this.board[x][y].hit;
       }
     }
 
