@@ -1,4 +1,6 @@
 import { GameBoardFactory } from "@/modules/GameBoardFactory";
+import { PlayerFactory } from "@/modules/PlayerFactory";
+
 const gb = GameBoardFactory();
 
 describe("Game Board", () => {
@@ -24,7 +26,8 @@ describe("Placing ships", () => {
   });
   test("Placing ship out of bounds horizontally returns error", () => {
     expect(gb.gameBoard.placeShipOnBoard(7, 0, 0, 6)).toStrictEqual(
-      "Error! Can't place ship out of bounds!");
+      "Error! Can't place ship out of bounds!"
+    );
   });
   test("Placing ships vertically works", () => {
     expect(gb.gameBoard.placeShipOnBoard(0, 5, 1, 4)).toStrictEqual([
@@ -36,7 +39,8 @@ describe("Placing ships", () => {
   });
   test("Placing ship out of bounds vertically returns error", () => {
     expect(gb.gameBoard.placeShipOnBoard(0, 8, 1, 4)).toStrictEqual(
-      "Error! Can't place ship out of bounds!");
+      "Error! Can't place ship out of bounds!"
+    );
   });
   test("Placing a ship on top of another ship returns an error", () => {
     expect(gb.gameBoard.placeShipOnBoard(0, 5, 1, 4)).toStrictEqual(
@@ -55,5 +59,14 @@ describe("Attacking", () => {
   test("Returns false if there are surviving ships", () => {
     expect(gb.gameBoard.checkFleetSunk()).toStrictEqual(false);
   });
-  
+});
+
+describe("Players", () => {
+  // Players must be able to attack the enemy game board
+  test("Players must be able to attack a game board", () => {
+    expect(gb.gameBoard.player1.attack(0, 5)).toStrictEqual([true, 5, false]);
+  });
+  // The attack method should specify coords and which player is attacking
+
+  // Computer player must be able to make a random play
 });

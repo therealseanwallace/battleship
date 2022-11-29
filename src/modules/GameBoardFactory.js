@@ -1,5 +1,4 @@
 import { ShipFactory } from "./ShipFactory";
-import { players } from "./PlayerFactory";
 
 export const GameBoardFactory = () => {
   class Square {
@@ -29,7 +28,7 @@ export const GameBoardFactory = () => {
     }
     return array;
   };
-
+  
   class Board {
     constructor() {
       this.board = buildBoard();
