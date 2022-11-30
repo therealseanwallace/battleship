@@ -1,6 +1,7 @@
 import { GameBoardFactory } from "@/modules/GameBoardFactory";
 
 const gb = GameBoardFactory();
+console.log("gb.gameBoard.board[0][0] =", gb.gameBoard.board[0][0]);
 
 describe("Game Board", () => {
   test("Returns an object", () => {

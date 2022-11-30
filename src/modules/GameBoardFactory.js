@@ -28,7 +28,7 @@ export const GameBoardFactory = () => {
     }
     return array;
   };
-  
+
   class Board {
     constructor() {
       this.board = buildBoard();
