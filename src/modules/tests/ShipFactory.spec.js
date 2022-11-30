@@ -30,9 +30,9 @@ describe("ShipFactory", () => {
     expect(testFrigate.sunk).toStrictEqual(false);
   });
   test("Hit method works correctly", () => {
-    expect(testBattleship.hit()).toStrictEqual([5, false]);
+    expect(testBattleship.hit()).toStrictEqual([true, 5, false]);
   });
   test("Hit method works correctly when ship has 1hp", () => {
-    expect(sinkTest.hit()).toStrictEqual([0, true]);
+    expect(sinkTest.hit()).toStrictEqual([true, 0, true]);
   });
 });
