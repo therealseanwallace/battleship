@@ -1,22 +1,17 @@
-import { GameBoardFactory } from "./GameBoardFactory";
-
-/*class Player {
-  constructor(playerType) {
-    this.playerType = playerType;
-    this.gameBoard = GameBoardFactory();
-  }
-}*/
+import {
+  GameBoardFactory,
+} from "./GameBoardFactory";
 
 export const playerFactory = () => {
-  const output = [];
   const innerPlayerFactory = (type) => {
     const playerType = type;
-    const gameBoard = GameBoardFactory();
-    return { playerType, gameBoard }
+    const board = GameBoardFactory();
+    console.log("playerFactory! board =", board);
+    return { playerType, board };
   };
 
   const human = innerPlayerFactory(1);
   const cpu = innerPlayerFactory(2);
-  
+
   return [human, cpu];
 };
