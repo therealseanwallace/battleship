@@ -53,6 +53,9 @@ describe("Attacking", () => {
     expect(gb.gameBoard.receiveAttack(0, 0)).toStrictEqual([true, 5, false]);
   });
   test("Hitting an empty square returns correct result", () => {
+    expect(gb.gameBoard.receiveAttack(6, 6)).toStrictEqual(true);
+  });
+  test("Hitting an already-hit square returns correct result", () => {
     expect(gb.gameBoard.receiveAttack(6, 6)).toStrictEqual(false);
   });
   test("Returns false if there are surviving ships", () => {

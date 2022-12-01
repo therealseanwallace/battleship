@@ -91,17 +91,19 @@ function getShip(ID) {
 function receiveAttack(x, y) {
   // we look up the given square. if there is an occupant, we get the ship's
   // object using getShip() and call its hit() method
+  if (this.board[x][y].hit === true) {
+    return false;
+  }
   if (this.board[x][y].occupant !== null) {
     const ship = this.getShip(this.board[x][y].occupant);
     this.board[x][y].hit = true;
     return ship.hit();
   }
   this.board[x][y].hit = true;
-  return !this.board[x][y].hit;
+  return this.board[x][y].hit;
 }
 
 function checkForOccupants(x, y, horizVert, length) {
-  console.log("checkForOccupants! this is", this);
   if (horizVert === 0) {
     for (let i = 0; i < length; i++) {
       const element = this.board[x + i][y];
@@ -147,10 +149,6 @@ class Square {
 
 const GameBoardFactory = () => {
   const gameBoard = new Board();
-  console.log(
-    "GameBoardFactory! gameBoard.placeShipOnBoard =",
-    gameBoard.placeShipOnBoard
-  );
   return { gameBoard };
 };
 
