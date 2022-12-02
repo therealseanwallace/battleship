@@ -1,0 +1,7 @@
+Notes
+
+we don't actually want controller to return the players - it's not required
+for the interface to have access to those objects. Instead, we should
+return several functions that correspond to the actions which players need
+to take in the interface, which will call the player objects from within
+the controller IIFE, avoiding exposing the player objects publicly

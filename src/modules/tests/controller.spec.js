@@ -6,17 +6,17 @@ describe("Controller works correctly", () => {
   test("Controller is present", () => {
     expect(controller);
   });
-  test("cpu returns a cpuAttack function", () => {
-    expect(controller.cpu.attack);
+  test("Placing a ship via the controller works", () => {
+    expect(controller.placeShip(0, 0, 0, 6, 1)).toStrictEqual([
+      [0, 0],
+      [1, 0],
+      [2, 0],
+      [3, 0],
+      [4, 0],
+      [5, 0],
+    ]);
   });
-  test("cpuAttack method works", () => {
-    // cpuAttack should generate a random x/y coord, then call the attack
-    // method on the human player object
-    expect(controller.cpu.attack()).toStrictEqual(true);
-  });
-  test("humanAttack method works", () => {
-    // cpuAttack should generate a random x/y coord, then call the attack
-    // method on the human player object
-    expect(controller.human.attack(0, 0)).toStrictEqual(true);
+  test("Hitting the test battleship returns correct result", () => {
+    expect(controller.attack(0, 0, 1)).toStrictEqual([true, 5, false]);
   });
 });

@@ -1,9 +1,11 @@
 import { playerFactory } from "@/modules/playerFactory";
 
 describe("Players", () => {
+  const testPlayers = playerFactory();
+  console.log('testPlayers.human.board.gameBoard.board =', testPlayers.human.board.gameBoard.board);
   // Should return a player object with the appropriate methods and
   // attributes
-  const testPlayers = playerFactory();
+
   test("Returns an array with two player objects with a gameBoard", () => {
     expect(testPlayers.human.board).toBeTruthy();
     expect(testPlayers.cpu.board).toBeTruthy();
@@ -20,7 +22,6 @@ describe("Players", () => {
     expect(testPlayers.human.board.gameBoard.placeShipOnBoard).toBeTruthy();
   });
   test("Placing a ship works", () => {
-    // this doesn't pass as I expected
     expect(
       testPlayers.human.board.gameBoard.placeShipOnBoard(0, 0, 0, 6)
     ).toStrictEqual([
@@ -39,7 +40,7 @@ describe("Players", () => {
       false,
     ]);
   });
-  test("Attacking returns false if there are surviving ships", () => {
+  test("checkFleetSunk returns false if there are surviving ships", () => {
     expect(testPlayers.human.board.gameBoard.checkFleetSunk()).toStrictEqual(false);
   });
   test("Computer players have a cpuAttack method", () => {

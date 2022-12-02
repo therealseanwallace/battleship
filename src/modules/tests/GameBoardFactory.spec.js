@@ -3,6 +3,7 @@ import { GameBoardFactory } from "@/modules/GameBoardFactory";
 const gb = GameBoardFactory();
 
 describe("Game Board", () => {
+  console.log('gb.gameBoard.board is', gb.gameBoard.board);
   test("Returns an object", () => {
     expect(gb).toBeTruthy();
     expect(typeof gb).toBe("object");
