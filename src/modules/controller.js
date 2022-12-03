@@ -1,4 +1,4 @@
-import { playerFactory } from "@/modules/playerFactory";
+import { playerFactory } from "./playerFactory";
 
 export const controller = (() => {
   const { human, cpu } = playerFactory();

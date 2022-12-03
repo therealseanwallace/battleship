@@ -97,6 +97,9 @@ function receiveAttack(x, y) {
   if (this.board[x][y].occupant !== null) {
     const ship = this.getShip(this.board[x][y].occupant);
     this.board[x][y].hit = true;
+    if (this.checkFleetSunk() === true) {
+      return true;
+    }
     return ship.hit();
   }
   this.board[x][y].hit = true;
