@@ -12,6 +12,7 @@ export const componentFactory = (element) => {
     taskID,
     placeholder,
     id,
+    xy,
   } = element;
   const createDOMNode = () => {
     const parentNode = document.querySelector(parent);
@@ -43,6 +44,13 @@ export const componentFactory = (element) => {
     if (id) {
       newDOMNode.id = id;
     }
+
+    if (xy) {
+      newDOMNode.dataset.x = xy[0];
+      newDOMNode.dataset.y = xy[1];
+      newDOMNode.dataset.sqnum = xy[2];
+    }
+    console.log('componentFactory! newDOMNode = ', newDOMNode);
     parentNode.append(newDOMNode);
   };
   createDOMNode();

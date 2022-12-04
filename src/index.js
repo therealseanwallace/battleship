@@ -1,5 +1,5 @@
 import css from "./modules/styles.css"
-import { buildInterface } from "./modules/interface"
+import { buildInterface, buildShipPlacement } from "./modules/interface"
 
 
 buildInterface();
