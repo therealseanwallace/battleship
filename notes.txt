@@ -5,3 +5,14 @@ for the interface to have access to those objects. Instead, we should
 return several functions that correspond to the actions which players need
 to take in the interface, which will call the player objects from within
 the controller IIFE, avoiding exposing the player objects publicly
+
+
+ships from: <a href="https://www.freevector.com/spaceships-silhouettes-set#">FreeVector.com</a>
+
+bship dimensions: 236 * 36
+
+crusier dimensions: 156 * 36
+
+destroyer: 116 * 36
+
+frigate: 76*36

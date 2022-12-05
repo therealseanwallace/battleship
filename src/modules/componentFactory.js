@@ -1,4 +1,5 @@
 export const componentFactory = (element) => {
+  console.log('componentFactory called with element = ', element);
   const {
     name,
     nodeType,
@@ -13,6 +14,7 @@ export const componentFactory = (element) => {
     placeholder,
     id,
     xy,
+    allowDrop,
   } = element;
   const createDOMNode = () => {
     const parentNode = document.querySelector(parent);
@@ -42,6 +44,7 @@ export const componentFactory = (element) => {
       newDOMNode.textContent = text;
     }
     if (id) {
+      console.log('element has id! id = ', id);
       newDOMNode.id = id;
     }
 
@@ -50,7 +53,10 @@ export const componentFactory = (element) => {
       newDOMNode.dataset.y = xy[1];
       newDOMNode.dataset.sqnum = xy[2];
     }
-    console.log('componentFactory! newDOMNode = ', newDOMNode);
+    if (allowDrop) {
+      newDOMNode.setAttribute("ondrop", "drop(event)");
+      newDOMNode.setAttribute("ondragover", "allowDrop(event)");
+    }
     parentNode.append(newDOMNode);
   };
   createDOMNode();

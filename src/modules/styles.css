@@ -50,6 +50,14 @@ h6 {
 
 /* STYLES */
 
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
 .content {
   display: flex;
   flex-direction: column;
@@ -63,13 +71,13 @@ h6 {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 600px;
-  width: 600px;
+  height: 1000px;
+  width: 400px;
 }
 
 .placement-grid {
-  width: 100%;
-  height: 100%;
+  width: 400px;
+  height: 400px;
   display: flex;
   flex-wrap: wrap;
 }
@@ -78,4 +86,44 @@ h6 {
   width: 10%;
   height: 10%;
   border: 1px solid grey;
+  position: relative;
+  overflow: visible;
+}
+
+.ships-container {
+  display: flex;
+  gap: 40px;
+  flex-direction: column;
+}
+
+.draggable {
+  max-width: 100vw;
+}
+
+.ship-placement {
+  position: relative;
+}
+
+.battleship-rotated {
+  left: -98px;
+  top: 100px;
+  position: absolute;
+}
+
+.cruiser-rotated {
+  left: -59px;
+  top: 62px;
+  position: absolute;
+}
+
+.destroyer-rotated {
+  left: -38px;
+  top: 41px;
+  position: absolute;
+}
+
+.frigate-rotated {
+  left: -18px;
+  top: 20px;
+  position: absolute;
 }

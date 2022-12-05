@@ -18,8 +18,11 @@ const buildBoard = () => {
 };
 
 function placeShipOnBoard(x, y, horizVert, shipType) {
+  console.log('placeShipOnBoard! args are ', x, y, horizVert, shipType);
+  console.log('placeShipOnBoard! this is ', this);
   // make a new ship according to shipType
   const newShip = ShipFactory.ShipFactory(shipType);
+  console.log('newShip is ', newShip);
 
   newShip.orientation = horizVert;
   const newShipLength = newShip.length;
@@ -125,6 +128,39 @@ function checkForOccupants(x, y, horizVert, length) {
   return false;
 }
 
+function rotateShipinStorage(x, y) {
+  // find the ship at the given coordinates
+  console.log('this is, ', this);
+  console.log('this.board[x][y].occupant is ', this.board[x][y].occupant);
+  const shipID = this.board[x][y].occupant;
+  const ship = this.getShip(this.board[x][y].occupant);
+  console.log('ship is, ', ship);
+  // if the ship is horizontal, rotate it to vertical
+  const result = [];
+  if (ship.orientation === 0) {
+    ship.orientation = 1;
+    result.push([x, y]);
+    for (let i = 1; i < ship.length; i++) {
+      const xElement = this.board[x + i][y];
+      xElement.occupant = null;
+      const yElement = this.board[x][y - i];
+      yElement.occupant = shipID;
+      result.push([x, y + i]);
+    }
+  } else {
+    // otherwise, rotate it to horizontal
+    ship.orientation = 0;
+    for (let i = 1; i < ship.length; i++) {
+      const xElement = this.board[x + i][y];
+      xElement.occupant = shipId;
+      const yElement = this.board[x][y - i];
+      yElement.occupant = null;
+      result.push([x + i, y]);
+    }
+  }
+  return result;
+}
+
 class Board {
   constructor() {
     this.board = buildBoard();
@@ -134,6 +170,7 @@ class Board {
     this.receiveAttack = receiveAttack;
     this.getShip = getShip;
     this.checkFleetSunk = checkFleetSunk;
+    this.rotateShipinStorage = rotateShipinStorage;
   }
 }
 
@@ -162,5 +199,6 @@ export {
   getShip,
   receiveAttack,
   checkForOccupants,
+  rotateShipinStorage,
   GameBoardFactory,
 };
