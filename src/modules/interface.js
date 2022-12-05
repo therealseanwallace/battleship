@@ -197,16 +197,32 @@ const drag = (e) => {
   dragStorage = e.target;
   console.log("drag! ev.target = ", e.target);
   e.dataTransfer.setData("img", e.target.id);
-
   console.log("dragStorage is", dragStorage);
 };
+
+const addAttackListeners = () => { 
+  console.log("addAttackListeners!)")
+  const gridSquares = document.querySelectorAll(".cpu-grid-square");
+  gridSquares.forEach((square) => {
+    square.addEventListener("click", (e) => {
+      console.log("e.target is", e.target);
+      const x = Number(e.target.dataset.x);
+      const y = Number(e.target.dataset.y);
+      console.log("x is", x);
+      console.log("y is", y);
+      const humanAttackResult = controller.human.attack(x, y);
+      console.log("humanAttackResult is", humanAttackResult);
+    });
+  });
+}
 
 const buildMainGame = () => { 
   const startGame = document.querySelector('.start-game');
   startGame.style.display = 'none';
   componentFactory(cpu[0]);
   buildGrid(2);
-  controller.startGame();
+  controller.gameFlow(true);
+  addAttackListeners();
 }
 
 const drop = (e) => {

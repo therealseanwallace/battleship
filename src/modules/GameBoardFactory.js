@@ -99,6 +99,8 @@ function rotateShip(x, y) {
   return result;
 }
 
+// there perhaps needs to be some difference here between the cpu and player
+
 function receiveAttack(x, y) {
   // we look up the given square. if there is an occupant, we get the ship's
   // object using getShip() and call its hit() method
@@ -111,10 +113,10 @@ function receiveAttack(x, y) {
     if (this.checkFleetSunk() === true) {
       return true;
     }
-    return ship.hit();
+    return [[x,y], true];
   }
   this.board[x][y].hit = true;
-  return this.board[x][y].hit;
+  return [[x, y], false];
 }
 
 function checkForOccupants(x, y, horizVert, length) {

@@ -10,16 +10,20 @@ export const controller = (() => {
     }
     return cpu.board.gameBoard.receiveAttack(x, y);
   };*/
-  const startGame = () => {
-    for (let index = 0; index < 100; index++) {
+
+  const gameFlow = (isFirstTurn) => {
+    if (isFirstTurn) {
       if (flipCoin() === 0) {
         console.log('human goes first');
         return 1;
       }
+      console.log('cpu goes first');
+      const cpuAttackResult = cpu.attack();
+      console.log('cpu attack result is', cpuAttackResult);
+      return cpuAttackResult;
+    }    
       
-      
-    }
   }
 
-  return { startGame, human, cpu };
+  return { gameFlow, human, cpu };
 })();
