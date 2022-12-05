@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { ShipFactory } from "./ShipFactory";
+import { flipCoin } from "./helpers";
 
 const buildBoard = () => {
   // build a 2d array representing a 10x10 game board
@@ -18,11 +19,11 @@ const buildBoard = () => {
 };
 
 function placeShipOnBoard(x, y, horizVert, shipType) {
-  console.log('placeShipOnBoard! args are ', x, y, horizVert, shipType);
-  console.log('placeShipOnBoard! this is ', this);
+  console.log("placeShipOnBoard! args are ", x, y, horizVert, shipType);
+  console.log("placeShipOnBoard! this is ", this);
   // make a new ship according to shipType
   const newShip = ShipFactory.ShipFactory(shipType);
-  console.log('newShip is ', newShip);
+  console.log("newShip is ", newShip);
 
   newShip.orientation = horizVert;
   const newShipLength = newShip.length;
@@ -91,6 +92,13 @@ function getShip(ID) {
   }
 }
 
+function rotateShip(x, y) {
+  console.log("rotateShip! args are ", x, y);
+  const result = this.rotateShipinStorage(x, y);
+  console.log("result is, ", result);
+  return result;
+}
+
 function receiveAttack(x, y) {
   // we look up the given square. if there is an occupant, we get the ship's
   // object using getShip() and call its hit() method
@@ -130,11 +138,12 @@ function checkForOccupants(x, y, horizVert, length) {
 
 function rotateShipinStorage(x, y) {
   // find the ship at the given coordinates
-  console.log('this is, ', this);
-  console.log('this.board[x][y].occupant is ', this.board[x][y].occupant);
+  console.log("this is, ", this);
+  console.log("this.board is, ", this.board);
+  console.log("this.board[x][y].occupant is ", this.board[x][y].occupant);
   const shipID = this.board[x][y].occupant;
   const ship = this.getShip(this.board[x][y].occupant);
-  console.log('ship is, ', ship);
+  console.log("ship is, ", ship);
   // if the ship is horizontal, rotate it to vertical
   const result = [];
   if (ship.orientation === 0) {
@@ -152,7 +161,7 @@ function rotateShipinStorage(x, y) {
     ship.orientation = 0;
     for (let i = 1; i < ship.length; i++) {
       const xElement = this.board[x + i][y];
-      xElement.occupant = shipId;
+      xElement.occupant = shipID;
       const yElement = this.board[x][y - i];
       yElement.occupant = null;
       result.push([x + i, y]);
@@ -160,6 +169,8 @@ function rotateShipinStorage(x, y) {
   }
   return result;
 }
+
+
 
 class Board {
   constructor() {
@@ -171,6 +182,7 @@ class Board {
     this.getShip = getShip;
     this.checkFleetSunk = checkFleetSunk;
     this.rotateShipinStorage = rotateShipinStorage;
+    this.rotateShip = rotateShip;
   }
 }
 

@@ -1,4 +1,4 @@
-import { displayObjects, shipPlacement, ships } from "./displayObjects";
+import { displayObjects, shipPlacement, ships, cpu } from "./displayObjects";
 import Cruiser from "../resources/Cruiser.png";
 import Battleship from "../resources/Battleship.png";
 import Destroyer from "../resources/Destroyer.png";
@@ -58,6 +58,7 @@ const componentFactory = (element) => {
       newDOMNode.dataset.x = xy[0];
       newDOMNode.dataset.y = xy[1];
       newDOMNode.dataset.sqnum = xy[2];
+      newDOMNode.dataset.player = xy[3];
     }
     parentNode.append(newDOMNode);
   };
@@ -76,13 +77,19 @@ const componentFactory = (element) => {
   };
 };
 
-const buildGrid = () => {
+const buildGrid = (player) => {
   let sqNum = 0;
   for (let i = 9; i > -1; i--) {
     for (let j = 0; j < 10; j++) {
-      const newSquare = shipPlacement[4];
-      newSquare.xy = [j, i, sqNum];
+      const newSquare = shipPlacement[shipPlacement.length - 1];
+      newSquare.xy = [j, i, sqNum, player];
       sqNum += 1;
+      if (player === 1) {
+        newSquare.class2 = "player-grid-square";
+      } else {
+        newSquare.class2 = "cpu-grid-square";
+        newSquare.parent = ".cpu-board";
+      }
       componentFactory(newSquare);
     }
   }
@@ -118,6 +125,7 @@ const buildShips = () => {
 };
 
 let dragStorage = [];
+let placedShipsCount = 0;
 
 const rotateShipinStorage = (x, y) => {
   controller.rotateShipinStorage();
@@ -125,6 +133,7 @@ const rotateShipinStorage = (x, y) => {
 
 const rotateShip = (e) => {
   console.log("rotateShip! e.target is", e.target);
+  console.log("rotateShip! controller.human.board.gameBoard is", controller.human.board.gameBoard);
   const ship = e.target;
   console.log("rotateShip! ship is", ship);
   const parent = ship.parentNode;
@@ -136,13 +145,12 @@ const rotateShip = (e) => {
         ship.dataset.orientation = "1";
         ship.style.transform = "rotate(90deg)";
         ship.classList.add("battleship-rotated");
-        controller.rotateShip(parentX, parentY);
       } else {
         ship.dataset.orientation = "0";
         ship.style.transform = "rotate(0deg)";
         ship.classList.remove("battleship-rotated");
-        controller.rotateShip(parentX, parentY);
       }
+      controller.human.board.gameBoard.rotateShip(parentX, parentY);
       break;
 
     case 4:
@@ -150,13 +158,12 @@ const rotateShip = (e) => {
         ship.dataset.orientation = "1";
         ship.style.transform = "rotate(90deg)";
         ship.classList.add("cruiser-rotated");
-        controller.rotateShip(parentX, parentY);
       } else {
         ship.dataset.orientation = "0";
         ship.style.transform = "rotate(0deg)";
         ship.classList.remove("cruiser-rotated");
-        controller.rotateShip(parentX, parentY);
       }
+      controller.human.board.gameBoard.rotateShip(parentX, parentY);
       break;
 
     case 3:
@@ -164,13 +171,12 @@ const rotateShip = (e) => {
         ship.dataset.orientation = "1";
         ship.style.transform = "rotate(90deg)";
         ship.classList.add("destroyer-rotated");
-        controller.rotateShip(parentX, parentY);
       } else {
         ship.dataset.orientation = "0";
         ship.style.transform = "rotate(0deg)";
         ship.classList.remove("destroyer-rotated");
-        controller.rotateShip(parentX, parentY);
       }
+      controller.human.board.gameBoard.rotateShip(parentX, parentY);
       break;
 
     default:
@@ -178,13 +184,12 @@ const rotateShip = (e) => {
         ship.dataset.orientation = "1";
         ship.style.transform = "rotate(90deg)";
         ship.classList.add("frigate-rotated");
-        controller.rotateShip(parentX, parentY);
       } else {
         ship.dataset.orientation = "0";
         ship.style.transform = "rotate(0deg)";
         ship.classList.remove("frigate-rotated");
-        controller.rotateShip(parentX, parentY);
       }
+      controller.human.board.gameBoard.rotateShip(parentX, parentY);
   }
 };
 
@@ -195,6 +200,14 @@ const drag = (e) => {
 
   console.log("dragStorage is", dragStorage);
 };
+
+const buildMainGame = () => { 
+  const startGame = document.querySelector('.start-game');
+  startGame.style.display = 'none';
+  componentFactory(cpu[0]);
+  buildGrid(2);
+  controller.startGame();
+}
 
 const drop = (e) => {
   console.log("drop! ev.target = ", e.target);
@@ -211,14 +224,21 @@ const drop = (e) => {
   );
   console.log(
     "placing ship! result is",
-    controller.placeShip(
+    controller.human.board.gameBoard.placeShipOnBoard(
       Number(e.target.dataset.x),
       Number(e.target.dataset.y),
       Number(dragStorage.dataset.orientation),
-      Number(dragStorage.dataset.length),
-      1
+      Number(dragStorage.dataset.length)
     )
   );
+  placedShipsCount += 1;
+  console.log('placedShipsCount is', placedShipsCount);
+  if (placedShipsCount === 4) {
+    const startGame = document.querySelector('.start-game');
+    startGame.style.display = "block";
+    startGame.addEventListener('click', buildMainGame);
+    document.querySelector(".ships-container").style.display = "none";
+  }
   console.log("dragStorage.id is", dragStorage.id);
   document
     .querySelector(`#${dragStorage.id}`)
@@ -245,11 +265,11 @@ const addDragListeners = () => {
 
 const buildShipPlacement = () => {
   document.querySelector(".content").innerHTML = "";
-  for (let i = 0; i < 4; i += 1) {
+  for (let i = 0; i < shipPlacement.length - 1; i += 1) {
     const element = shipPlacement[i];
     componentFactory(element);
   }
-  buildGrid();
+  buildGrid(1);
   buildShips();
   addDragListeners();
 };

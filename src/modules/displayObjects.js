@@ -54,6 +54,14 @@ export const shipPlacement = [
     class1: "ships-container",
   },
   {
+    name: "startGame",
+    nodeType: "input",
+    parent: ".placement-container",
+    class1: "start-game",
+    inputType: "button",
+    value: "Start Game",
+  },
+  {
     name: "placementGridSquare",
     nodeType: "div",
     parent: ".placement-grid",
@@ -90,4 +98,13 @@ export const ships = [
     class1: "ship-placement",
     class2: "frigate-placement",
   },
+]
+
+export const cpu = [
+  {
+    name: "cpuBoard",
+    nodeType: "div",
+    parent: ".placement-container",
+    class1: "cpu-board",
+  }
 ]
