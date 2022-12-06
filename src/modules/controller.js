@@ -1,29 +1,18 @@
-import { playerFactory } from "./playerFactory";
-import { flipCoin } from "./helpers";
+import { playerFactory } from "@/modules/playerFactory";
 
 export const controller = (() => {
   const { human, cpu } = playerFactory();
-
-  /*const attack = (x, y, player) => {
+  const placeShip = (x, y, horizVert, type, player) => {
+    if (player === 1) {
+      return human.board.gameBoard.placeShipOnBoard(x, y, horizVert, type);
+    }
+    return cpu.board.gameBoard.placeShipOnBoard(x, y, horizVert, type);
+  };
+  const attack = (x, y, player) => {
     if (player === 1) {
       return human.board.gameBoard.receiveAttack(x, y);
     }
     return cpu.board.gameBoard.receiveAttack(x, y);
-  };*/
-
-  const gameFlow = (isFirstTurn) => {
-    if (isFirstTurn) {
-      if (flipCoin() === 0) {
-        console.log('human goes first');
-        return 1;
-      }
-      console.log('cpu goes first');
-      const cpuAttackResult = cpu.attack();
-      console.log('cpu attack result is', cpuAttackResult);
-      return cpuAttackResult;
-    }    
-      
-  }
-
-  return { gameFlow, human, cpu };
+  };
+  return { placeShip, attack };
 })();
