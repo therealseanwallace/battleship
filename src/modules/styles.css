@@ -137,6 +137,13 @@ main {
   position: absolute;
 }
 
+.hit-occupied {
+  background-color: green;
+}
+
+.hit-empty {
+  background-color: red;
+}
 /*.cpu-grid-square:first-of-type {
   margin-top: 50px;
 }*/

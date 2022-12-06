@@ -79,6 +79,8 @@ const componentFactory = (element) => {
 
 const buildGrid = (player) => {
   let sqNum = 0;
+  let humanSqNum = 0;
+  let cpuSqNum = 0;
   for (let i = 9; i > -1; i--) {
     for (let j = 0; j < 10; j++) {
       const newSquare = shipPlacement[shipPlacement.length - 1];
@@ -86,9 +88,13 @@ const buildGrid = (player) => {
       sqNum += 1;
       if (player === 1) {
         newSquare.class2 = "player-grid-square";
+        newSquare.class3 = `player-grid-square-${j}-${i}`;
+        humanSqNum += 1;
       } else {
         newSquare.class2 = "cpu-grid-square";
         newSquare.parent = ".cpu-board";
+        newSquare.class3 = `cpu-grid-square-${j}-${i}`;
+        cpuSqNum += 1;
       }
       componentFactory(newSquare);
     }
@@ -200,28 +206,79 @@ const drag = (e) => {
   console.log("dragStorage is", dragStorage);
 };
 
-const addAttackListeners = () => { 
-  console.log("addAttackListeners!)")
-  const gridSquares = document.querySelectorAll(".cpu-grid-square");
-  gridSquares.forEach((square) => {
-    square.addEventListener("click", (e) => {
-      console.log("e.target is", e.target);
+const cpuAttack = () => { 
+  let successfulAttack = false;
+  while (!successfulAttack) { 
+    const attack = controller.cpu.attack();
+    if (attack) {
+      successfulAttack = true;
+      addAttackListeners();
+    }
+  }
+}
+
+const removeAttackListeners = () => { 
+  const squares = document.querySelectorAll(".cpu-grid-square");
+  squares.forEach((square) => {
+    square.removeEventListener("click", attack);
+  });
+ }
+
+ const attack = (e) => { 
+  console.log("e.target is", e.target);
       const x = Number(e.target.dataset.x);
       const y = Number(e.target.dataset.y);
       console.log("x is", x);
       console.log("y is", y);
       const humanAttackResult = controller.human.attack(x, y);
+      if (humanAttackResult) { 
+        removeAttackListeners();
+      }
       console.log("humanAttackResult is", humanAttackResult);
-    });
+}
+
+
+const addAttackListeners = () => { 
+  console.log("addAttackListeners!)")
+  const gridSquares = document.querySelectorAll(".cpu-grid-square");
+  gridSquares.forEach((square) => {
+    square.addEventListener("click", attack);
   });
 }
 
+const markSquareHit = (x, y, isOccupied, isCPU) => {
+  let square;
+  if (isCPU) { 
+    square = document.querySelector(`.player-grid-square-${x}-${y}`);
+    console.log("square is", square);
+    if (isOccupied) { 
+      square.classList.add("hit-occupied");
+    } else { 
+      square.classList.add("hit-empty");
+    }
+   } else {
+    square = document.querySelector(`.cpu-grid-square-${x}-${y}`);
+    console.log("square is", square);
+    if (isOccupied) { 
+      square.classList.add("hit-occupied");
+    } else {
+      square.classList.add("hit-empty");
+    }
+   }
+   console.log('square is', square);
+}
+
 const buildMainGame = () => { 
-  const startGame = document.querySelector('.start-game');
-  startGame.style.display = 'none';
+  const startGameButton = document.querySelector('.start-game');
+  startGameButton.style.display = 'none';
   componentFactory(cpu[0]);
   buildGrid(2);
-  controller.gameFlow(true);
+  const beginGame = controller.gameFlow(true);
+  console.log("beginGame is", beginGame);
+  if (beginGame !== 1) { 
+    markSquareHit(beginGame[0][0], beginGame[0][1], beginGame[1], true);
+  }
+
   addAttackListeners();
 }
 
