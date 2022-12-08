@@ -130,8 +130,8 @@ class Controller {
       iface.markSquareHit(move[0], move[1], true, false);
       iface.sunk(move[0], move[1], false);
     } else if (result === "gameOver") {
-      this.gameOver = true
-      iface.gameOver('You win');
+      this.gameOver = true;
+      iface.gameOver("You win");
     } else if (result === "false") {
       iface.invalidMove(1);
       this.gameFlow(1);
@@ -150,7 +150,7 @@ class Controller {
       iface.markSquareHit(move[0], move[1], true, true);
       iface.sunk(true);
     } else if (result === "gameOver") {
-      iface.gameOver('The computer wins!');
+      iface.gameOver("The computer wins!");
       this.gameOver = true;
     } else if (result === "false") {
       getCPUMove();
@@ -170,8 +170,9 @@ class Controller {
     }
   }
 
-  rotateShip() {
-    
+  rotateShip(coords) {
+    console.log("pubSub called rotateShip!", coords);
+    this.players.human.board.rotateShipinStorage(Number(coords[0]), Number(coords[1]));
   }
 }
 

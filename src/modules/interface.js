@@ -73,16 +73,10 @@ export function shipsPlaced() {
   startGame.addEventListener("click", buildMainGame);
 }
 
-export function rotateShipinStorage(x, y) {
-  controller.rotateShipinStorage();
-}
-
 export function rotateShip(e) {
   console.log("rotateShip! e.target is", e.target);
-  console.log(
-    "rotateShip! controller.human.board.gameBoard is",
-    controller.human.board.gameBoard
-  );
+  console.log("e.target.parentElement is", e.target.parentElement);
+  pubSub.pub("rotateShip", [e.target.parentElement.dataset.x, e.target.parentElement.dataset.y]);
   const ship = e.target;
   console.log("rotateShip! ship is", ship);
   const parent = ship.parentNode;
@@ -99,7 +93,6 @@ export function rotateShip(e) {
         ship.style.transform = "rotate(0deg)";
         ship.classList.remove("battleship-rotated");
       }
-      controller.human.board.gameBoard.rotateShip(parentX, parentY);
       break;
 
     case 4:
@@ -112,7 +105,6 @@ export function rotateShip(e) {
         ship.style.transform = "rotate(0deg)";
         ship.classList.remove("cruiser-rotated");
       }
-      controller.human.board.gameBoard.rotateShip(parentX, parentY);
       break;
 
     case 3:
@@ -125,7 +117,6 @@ export function rotateShip(e) {
         ship.style.transform = "rotate(0deg)";
         ship.classList.remove("destroyer-rotated");
       }
-      controller.human.board.gameBoard.rotateShip(parentX, parentY);
       break;
 
     default:
@@ -138,7 +129,6 @@ export function rotateShip(e) {
         ship.style.transform = "rotate(0deg)";
         ship.classList.remove("frigate-rotated");
       }
-      controller.human.board.gameBoard.rotateShip(parentX, parentY);
   }
 }
 
