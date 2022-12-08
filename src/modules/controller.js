@@ -68,8 +68,6 @@ const coinFlip = () => Math.floor(Math.random() * 2) + 1;
 
 // Event emitter for pub/sub implementation
 
-const pub = pubSub.pub.bind(PubSub);
-
 class Controller {
   constructor() {
     // pulls in players and board from playerFactory
@@ -190,6 +188,9 @@ class Controller {
     );
     console.log("placeHuman(ship) result is", result);
     console.log("typeof result is", typeof result);
+    if (result !== false) {
+      placedShip();
+    }
   }
 }
 
@@ -203,9 +204,6 @@ const placeHumanShip = controller.placeHuman.bind(controller);
 console.log("bound function. placeHumanShip is", placeHumanShip);
 
 pubSub.sub("placeShip", placeHumanShip);
-pubSub.sub("placeShip", placedShip);
-const placeShipSubs = pubSub.returnSubscribers("placeShip");
-console.log("placeShip subs are", placeShipSubs);
 pubSub.sub("shipsPlaced", iface.shipsPlaced);
 pubSub.sub("gameStart", startGame);
 pubSub.sub("getPlayersMove", iface.getPlayerMove);

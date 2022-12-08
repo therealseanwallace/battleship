@@ -102,6 +102,8 @@ function receiveAttack(coords) {
   const x = coords[0];
   const y = coords[1];
   console.log("receiveAttack! this is", this, "x is", x, "y is", y);
+  console.log("********** this.board is", this.board);
+  console.log("this.receiveAttack is", this.receiveAttack);
   const player = this.playerType;
   console.log("this.board[x][y] is", this.board[x][y]);
   console.log("this.board[x][y].hit is", this.board[x][y].hit);
@@ -162,6 +164,7 @@ class Board {
     this.checkForOccupants = checkForOccupants;
     this.receiveAttack = receiveAttack;
     this.getShip = getShip;
+    this.checkFleetSunk = checkFleetSunk;
   }
 }
 

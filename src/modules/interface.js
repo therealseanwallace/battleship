@@ -62,6 +62,14 @@ export function buildShips() {
 
 export function shipsPlaced() {
   console.log('shipsPlaced() called! adding event listener');
+  const draggables = document.querySelectorAll(".draggable");
+  draggables.forEach(draggable => {
+    console.log('draggable = ', draggable);
+    console.log('drabbale.parentElement = ', draggable.parentElement);
+    // using the x and y data attributes of the parent element,
+    // we can determine whether the ships' positions on the board are valid
+    
+  });
   const startGame = document.querySelector(".start-game");
   startGame.addEventListener("click", buildMainGame);
 }
@@ -274,12 +282,6 @@ export function drop(e) {
     Number(dragStorage.dataset.length),
   ]);
 
-  /*if (placedShipsCount === 4) {
-    const startGame = document.querySelector(".start-game");
-    startGame.style.display = "block";
-    startGame.addEventListener("click", buildMainGame);
-    document.querySelector(".ships-container").style.display = "none";
-  }*/
   console.log("dragStorage.id is", dragStorage.id);
   document
     .querySelector(`#${dragStorage.id}`)
