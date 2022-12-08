@@ -51,9 +51,10 @@ export const ShipFactory = (() => {
       hit() {
         hp -= 1;
         if (hp === 0) {
-          sunk = true;
+          this.sunk = true;
+          return "sunk";
         }
-        return [true, hp, this.checkSunk()];
+        return "hit";
       },
     };
   };

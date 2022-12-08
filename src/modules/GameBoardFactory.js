@@ -19,21 +19,22 @@ const buildBoard = () => {
 
 function placeShipOnBoard(x, y, horizVert, shipType) {
   // make a new ship according to shipType
+  console.log("placeShipOnBoard called with", x, y, horizVert, shipType);
+  console.log("this is ", this);
   const newShip = ShipFactory.ShipFactory(shipType);
-
-  newShip.orientation = horizVert;
+  newShip.direction = horizVert;
   const newShipLength = newShip.length;
 
   // the following if statements check that this is a legal ship placement
   if (horizVert === 0) {
     if (x + newShipLength > 9) {
-      return "Error! Can't place ship out of bounds!";
+      return false;
     }
   } else if (y + newShipLength > 9) {
-    return "Error! Can't place ship out of bounds!";
+    return false;
   }
   if (this.checkForOccupants(x, y, horizVert, newShipLength)) {
-    return "Error! Can't place a ship on top of another ship!";
+    return false;
   }
 
   this.shipArray.push(newShip);
@@ -43,9 +44,9 @@ function placeShipOnBoard(x, y, horizVert, shipType) {
   // loop through newShipLength squares in
   // the direction indicated by horizVert, modifying their occupant
   // attributes according to newShip's ID
-
+  console.log("newShip is", newShip);
   for (let i = 0; i < newShipLength; i++) {
-    if (newShip.orientation === 0) {
+    if (newShip.direction === 0) {
       // i.e. if this ship is placed horizontally
       this.board[x + i][y].placeShipOnSquare(newShip.shipID);
       if (this.board[x + i][y].occupant === newShip.shipID) {
@@ -59,20 +60,27 @@ function placeShipOnBoard(x, y, horizVert, shipType) {
       }
     }
   }
+  console.log("ship placed! result is", result);
   return result;
 }
 
 function checkFleetSunk() {
   // Loops through this.shipArray, checking each ships .sunk property. If
   // any unsunk ship is found, returns false - otherwise, returns true.
-  const array = this.shipArray;
-  for (let i = 0; i < array.length; i += 1) {
-    const ship = array[i];
+  console.log("checkFleetSunk! this is ", this);
+  console.log("this.shipArray is ", this.shipArray);
+  let result = true;
+  for (let i = 0; i < this.shipArray.length; i += 1) {
+    const ship = this.shipArray[i];
+    console.log("ship is ", ship, "ship.sunk is ", ship.sunk);
     if (!ship.sunk) {
-      return false;
+      result = false;
     }
   }
-  return true;
+  if (result) {
+    alert("game over!!");
+  }
+  return result;
 }
 
 // eslint-disable-next-line consistent-return
@@ -88,19 +96,43 @@ function getShip(ID) {
   }
 }
 
-function receiveAttack(x, y) {
+function receiveAttack(coords) {
   // we look up the given square. if there is an occupant, we get the ship's
   // object using getShip() and call its hit() method
+  const x = coords[0];
+  const y = coords[1];
+  console.log("receiveAttack! this is", this, "x is", x, "y is", y);
+  const player = this.playerType;
+  console.log("this.board[x][y] is", this.board[x][y]);
+  console.log("this.board[x][y].hit is", this.board[x][y].hit);
   if (this.board[x][y].hit === true) {
     return false;
   }
+  console.log("this.board[x][y].occupant is", this.board[x][y].occupant);
   if (this.board[x][y].occupant !== null) {
     const ship = this.getShip(this.board[x][y].occupant);
+    console.log("hit! ship is", ship);
     this.board[x][y].hit = true;
-    return ship.hit();
+    const status = ship.hit();
+    let checkFleet;
+    if (player === 1) {
+      const checkPlayerFleetSunk = checkFleetSunk.bind(playerBoard);
+      checkFleet = checkPlayerFleetSunk();
+    } else {
+      const checkCpuFleetSunk = checkFleetSunk.bind(cpuBoard);
+      checkFleet = checkCpuFleetSunk();
+    }
+    console.log("checkFleet is", checkFleet);
+    if (checkFleet === true) {
+      return "gameOver";
+    }
+    if (status === "sunk") {
+      return "sunk";
+    }
+    return "hit";
   }
   this.board[x][y].hit = true;
-  return this.board[x][y].hit;
+  return "miss";
 }
 
 function checkForOccupants(x, y, horizVert, length) {
@@ -130,7 +162,6 @@ class Board {
     this.checkForOccupants = checkForOccupants;
     this.receiveAttack = receiveAttack;
     this.getShip = getShip;
-    this.checkFleetSunk = checkFleetSunk;
   }
 }
 
@@ -147,10 +178,14 @@ class Square {
   }
 }
 
-const GameBoardFactory = () => {
-  const gameBoard = new Board();
-  return { gameBoard };
-};
+const playerBoard = new Board();
+const cpuBoard = new Board();
+
+/*const checkPlayerFleetSunk = checkFleetSunk.bind(playerBoard);
+console.log('checkPlayerFleetSunk is', checkPlayerFleetSunk)
+console.log('checkplayerFleetSunk() is', checkPlayerFleetSunk())
+const checkCpuFleetSunk = checkFleetSunk.bind(cpuBoard);
+console.log('checkCpuFleetSunk is', checkCpuFleetSunk)*/
 
 export {
   buildBoard,
@@ -159,5 +194,6 @@ export {
   getShip,
   receiveAttack,
   checkForOccupants,
-  GameBoardFactory,
+  playerBoard,
+  cpuBoard,
 };

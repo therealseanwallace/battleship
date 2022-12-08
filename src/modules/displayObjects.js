@@ -62,6 +62,26 @@ export const shipPlacement = [
     value: "Start Game",
   },
   {
+    name: "gameAlertContainer",
+    nodeType: "div",
+    parent: ".placement-container",
+    class1: "game-alert-container",
+  },
+  {
+    name: "playerAlerts",
+    nodeType: "h3",
+    parent: ".game-alert-container",
+    class1: "player-alert",
+    text: "",
+  },
+  {
+    name: "cpuAlerts",
+    nodeType: "h3",
+    parent: ".game-alert-container",
+    class1: "cpu-alert",
+    text: "",
+  },
+  {
     name: "placementGridSquare",
     nodeType: "div",
     parent: ".placement-grid",

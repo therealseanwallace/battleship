@@ -137,17 +137,10 @@ main {
   position: absolute;
 }
 
-.hit-occupied {
-  background-color: green;
-}
-
 .hit-empty {
-  background-color: red;
+  background-color: black;
 }
-/*.cpu-grid-square:first-of-type {
-  margin-top: 50px;
-}*/
 
-/*.start-game {
-  display: none;
-}*/
+.hit-occupied {
+  background-color: rgba(255, 0, 0, 0.5);
+}
