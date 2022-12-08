@@ -61,14 +61,13 @@ export function buildShips() {
 }
 
 export function shipsPlaced() {
-  console.log('shipsPlaced() called! adding event listener');
+  console.log("shipsPlaced() called! adding event listener");
   const draggables = document.querySelectorAll(".draggable");
-  draggables.forEach(draggable => {
-    console.log('draggable = ', draggable);
-    console.log('drabbale.parentElement = ', draggable.parentElement);
+  draggables.forEach((draggable) => {
+    console.log("draggable = ", draggable);
+    console.log("drabbale.parentElement = ", draggable.parentElement);
     // using the x and y data attributes of the parent element,
     // we can determine whether the ships' positions on the board are valid
-    
   });
   const startGame = document.querySelector(".start-game");
   startGame.addEventListener("click", buildMainGame);
@@ -160,7 +159,7 @@ function attack(e) {
   const y = Number(e.target.dataset.y);
   console.log("x is", x);
   console.log("y is", y);
-  pubSub.pub('playersMove', [x, y]);
+  pubSub.pub("playersMove", [x, y]);
 
   /*const humanAttackResult = controller.human.attack(x, y);
   if (humanAttackResult) {
@@ -196,44 +195,52 @@ export function addAttackListeners() {
 }
 
 export function sunk(isPlayerBoard) {
-  if (!isPlayerBoard) { 
-    document.querySelector(".cpu-alert").textContent = "The computer sunk your ship!";
+  if (!isPlayerBoard) {
+    document.querySelector(".cpu-alert").textContent =
+      "The computer sunk your ship!";
   } else {
-    document.querySelector(".player-alert").textContent = "You sunk an enemy ship!";
+    document.querySelector(".player-alert").textContent =
+      "You sunk an enemy ship!";
   }
 }
 
 export function markSquareHit(x, y, isOccupied, isPlayerBoard) {
   let square;
-  
+
   if (isPlayerBoard) {
     square = document.querySelector(`.player-grid-square-${x}-${y}`);
     console.log("square is", square);
     if (isOccupied) {
       square.classList.add("hit-occupied");
-      document.querySelector(".cpu-alert").textContent = ("The computer hit your ship!");
+      document.querySelector(".cpu-alert").textContent =
+        "The computer hit your ship!";
     } else {
       square.classList.add("hit-empty");
-      document.querySelector(".cpu-alert").textContent = ("The computer hit an empty square!");
+      document.querySelector(".cpu-alert").textContent =
+        "The computer hit an empty square!";
     }
   } else {
     square = document.querySelector(`.cpu-grid-square-${x}-${y}`);
     console.log("square is", square);
     if (isOccupied) {
       square.classList.add("hit-occupied");
-      document.querySelector(".player-alert").textContent = ("You hit an enemy ship!");
+      document.querySelector(".player-alert").textContent =
+        "You hit an enemy ship!";
     } else {
       square.classList.add("hit-empty");
-      document.querySelector(".player-alert").textContent = ("You hit an empty square!");
+      document.querySelector(".player-alert").textContent =
+        "You hit an empty square!";
     }
   }
 }
 
 export function invalidMove(player) {
   if (player === 1) {
-    document.querySelector(".cpu-alert").textContent = ("The computer tried to attack an invalid square!");
+    document.querySelector(".cpu-alert").textContent =
+      "The computer tried to attack an invalid square!";
   } else {
-    document.querySelector(".player-alert").textContent = ("You tried to attack an invalid square!");
+    document.querySelector(".player-alert").textContent =
+      "You tried to attack an invalid square!";
   }
 }
 
@@ -248,15 +255,27 @@ export function buildMainGame() {
   componentFactory(cpu[0]);
   buildGrid(2);
   pubSub.pub("gameStart", "true");
-
-  //addAttackListeners();
+  // remove ship-rotation event listeners
+  const draggables = document.querySelectorAll(".draggable");
+  for (let index = 0; index < draggables.length; index++) {
+    const element = draggables[index];
+    element.removeEventListener("click", rotateShip);
+    element.removeEventListener("dragstart", drag);
+  }
+  const squares = document.querySelectorAll(".placement-grid-square");
+  console.log("squares = ", squares);
+  for (let i = 0; i < squares.length; i++) {
+    const element = squares[i];
+    element.removeEventListener("drop", drop);
+    element.removeEventListener("dragover", allowDrop);
+  }
 }
 
 let dragStorage = "test";
 
 export function getPlayerMove() {
   // provide the player with some sort of prompt. for now, console
-  console.log('please make your move!');
+  console.log("please make your move!");
   const gridSquares = document.querySelectorAll(".cpu-grid-square");
   gridSquares.forEach((square) => {
     square.addEventListener("click", attack);

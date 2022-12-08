@@ -34,9 +34,9 @@ describe("Placing ships", () => {
   test("Placing ships vertically works", () => {
     expect(gb.placeShipOnBoard(0, 5, 1, 4)).toStrictEqual([
       [0, 5],
-      [0, 6],
-      [0, 7],
-      [0, 8],
+      [0, 4],
+      [0, 3],
+      [0, 2],
     ]);
   });
   test("Placing ship out of bounds vertically returns false", () => {
@@ -49,6 +49,15 @@ describe("Placing ships", () => {
       false
     );
   });
+  test("Rotating a ship returns the expected output", () => { 
+    expect(gb.rotateShipinStorage(0, 5)).toStrictEqual([
+      [0, 5],
+      [0, 4],
+      [0, 3],
+      [0, 2],
+    ]);
+  }
+  )
 });
 
 describe("Attacking", () => {

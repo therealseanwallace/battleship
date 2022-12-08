@@ -77,14 +77,9 @@ class Controller {
     this.shipsPlaced = false;
     this.gameOver = false;
     this.shipPlacedCount = 0;
-    console.log(
-      "this.players.human.board.placeShipOnBoard;",
-      this.players.human.board.placeShipOnBoard
-    );
   }
 
   startGame() {
-    console.log("startGame called");
     if (coinFlip() === 1) {
       this.gameFlow(1);
     } else {
@@ -118,25 +113,15 @@ class Controller {
   }
 
   shipPlaced() {
-    console.log("shipPlaced() called. this is", this);
     this.shipPlacedCount += 1;
     if (this.shipPlacedCount === 4) {
       this.shipsPlaced = true;
-      console.log("4 ships placed!");
-      console.log("iface is", iface);
-      //console.log('shipsPlaced is', shipsPlaced);
-      console.log("shipsPlaced is", iface.shipsPlaced);
       pubSub.pub("shipsPlaced", iface.shipsPlaced);
     }
-    console.log("shipPlacedCount =", this.shipPlacedCount);
   }
 
   playersMove(move) {
-    console.log("playersMove called. move is", move);
-    console.log("this.players.cpu.board is", this.players.cpu.board);
     const result = this.players.cpu.board.receiveAttack(move);
-    console.log("result is", result);
-    console.log("iface is", iface);
     if (result === "hit") {
       iface.markSquareHit(move[0], move[1], true, false);
     } else if (result === "miss") {
@@ -155,12 +140,8 @@ class Controller {
   }
 
   getCPUMove() {
-    console.log("getCPUMove called. this is ", this);
     const move = this.players.cpu.attack();
-    console.log("move is", move);
     const result = this.players.human.board.receiveAttack(move);
-    console.log("result is", result);
-    console.log("iface is", iface);
     if (result === "hit") {
       iface.markSquareHit(move[0], move[1], true, true);
     } else if (result === "miss") {
@@ -178,19 +159,19 @@ class Controller {
   }
 
   placeHuman(ship) {
-    console.log("this.players.human.board is", this.players.human.board);
-    console.log("placeHumanShip called. ship is", ship);
     const result = this.players.human.board.placeShipOnBoard(
       ship[0],
       ship[1],
       ship[2],
       ship[3]
     );
-    console.log("placeHuman(ship) result is", result);
-    console.log("typeof result is", typeof result);
     if (result !== false) {
       placedShip();
     }
+  }
+
+  rotateShip() {
+    
   }
 }
 
@@ -201,14 +182,14 @@ const startGame = controller.startGame.bind(controller);
 const playersMove = controller.playersMove.bind(controller);
 const getCPUMove = controller.getCPUMove.bind(controller);
 const placeHumanShip = controller.placeHuman.bind(controller);
-console.log("bound function. placeHumanShip is", placeHumanShip);
+const rotateShip = controller.rotateShip.bind(controller);
 
 pubSub.sub("placeShip", placeHumanShip);
 pubSub.sub("shipsPlaced", iface.shipsPlaced);
 pubSub.sub("gameStart", startGame);
 pubSub.sub("getPlayersMove", iface.getPlayerMove);
 pubSub.sub("playersMove", playersMove);
-//pubsub.sub("badShipPlacement", badShipPlacement);
+pubSub.sub("rotateShip", rotateShip);
 console.log("subs are", pubSub.returnSubscribers("placeShip"));
 
 export { pubSub };

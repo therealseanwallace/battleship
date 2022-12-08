@@ -19,8 +19,6 @@ const buildBoard = () => {
 
 function placeShipOnBoard(x, y, horizVert, shipType) {
   // make a new ship according to shipType
-  console.log("placeShipOnBoard called with", x, y, horizVert, shipType);
-  console.log("this is ", this);
   const newShip = ShipFactory.ShipFactory(shipType);
   newShip.direction = horizVert;
   const newShipLength = newShip.length;
@@ -30,7 +28,7 @@ function placeShipOnBoard(x, y, horizVert, shipType) {
     if (x + newShipLength > 9) {
       return false;
     }
-  } else if (y + newShipLength > 9) {
+  } else if (y - newShipLength < 0) {
     return false;
   }
   if (this.checkForOccupants(x, y, horizVert, newShipLength)) {
@@ -54,25 +52,21 @@ function placeShipOnBoard(x, y, horizVert, shipType) {
       }
     } else {
       // the ship is placed vertically
-      this.board[x][y + i].placeShipOnSquare(newShip.shipID);
-      if (this.board[x][y + i].occupant === newShip.shipID) {
-        result.push([x, y + i]);
+      this.board[x][y - i].placeShipOnSquare(newShip.shipID);
+      if (this.board[x][y - i].occupant === newShip.shipID) {
+        result.push([x, y - i]);
       }
     }
   }
-  console.log("ship placed! result is", result);
   return result;
 }
 
 function checkFleetSunk() {
   // Loops through this.shipArray, checking each ships .sunk property. If
   // any unsunk ship is found, returns false - otherwise, returns true.
-  console.log("checkFleetSunk! this is ", this);
-  console.log("this.shipArray is ", this.shipArray);
   let result = true;
   for (let i = 0; i < this.shipArray.length; i += 1) {
     const ship = this.shipArray[i];
-    console.log("ship is ", ship, "ship.sunk is ", ship.sunk);
     if (!ship.sunk) {
       result = false;
     }
@@ -101,19 +95,12 @@ function receiveAttack(coords) {
   // object using getShip() and call its hit() method
   const x = coords[0];
   const y = coords[1];
-  console.log("receiveAttack! this is", this, "x is", x, "y is", y);
-  console.log("********** this.board is", this.board);
-  console.log("this.receiveAttack is", this.receiveAttack);
   const player = this.playerType;
-  console.log("this.board[x][y] is", this.board[x][y]);
-  console.log("this.board[x][y].hit is", this.board[x][y].hit);
   if (this.board[x][y].hit === true) {
     return false;
   }
-  console.log("this.board[x][y].occupant is", this.board[x][y].occupant);
   if (this.board[x][y].occupant !== null) {
     const ship = this.getShip(this.board[x][y].occupant);
-    console.log("hit! ship is", ship);
     this.board[x][y].hit = true;
     const status = ship.hit();
     let checkFleet;
@@ -124,7 +111,6 @@ function receiveAttack(coords) {
       const checkCpuFleetSunk = checkFleetSunk.bind(cpuBoard);
       checkFleet = checkCpuFleetSunk();
     }
-    console.log("checkFleet is", checkFleet);
     if (checkFleet === true) {
       return "gameOver";
     }
@@ -147,13 +133,80 @@ function checkForOccupants(x, y, horizVert, length) {
     }
   } else {
     for (let i = 0; i < length; i++) {
-      const element = this.board[x][y + i];
+      const element = this.board[x][y - i];
       if (element.occupant !== null) {
         return true;
       }
     }
   }
   return false;
+}
+
+function deleteShip(ID) {
+  // loops through this.shipArray. upon finding ship with the given ID,
+  // deletes it
+  const array = this.shipArray;
+  for (let i = 0; i < array.length; i += 1) {
+    const ship = array[i];
+    if (ship.shipID === ID) {
+      array.splice(i, 1);
+    }
+  }
+}
+
+function rotateShipinStorage(x, y) {
+  // find the ship at the given coordinates and get its direction
+  const shipID = this.board[x][y].occupant;
+  const ship = this.getShip(this.board[x][y].occupant);
+  const dir = ship.direction;
+
+  // delete the ship from shipArray
+  console.log("rotating ship! this is", this);
+  this.deleteShip(shipID);
+
+  let result;
+
+  if (dir === 0) {
+    // if the ship is horizontal, clear the board of the ship horizontally
+    for (let i = 1; i < ship.length; i++) {
+      const xElement = this.board[x + i][y];
+      console.log("clearing squares! xElement.occupant =", xElement);
+      xElement.occupant = null;
+      console.log("cleared square! xElement.occupant =", xElement);
+    }
+    // check that the squares we will place the ship in are not occupied
+    for (let i = 1; i < ship.length; i++) {
+      const yElement = this.board[x][y + i];
+      if (yElement.occupant !== null) {
+        console.log('yElement is ', yElement)
+        console.log('yElement.occupant is ', yElement.occupant, 'not null')
+        return false;
+      }
+    }
+    // having removed the ship, place it with the new direction
+    result = this.placeShipOnBoard(x, y, 1, ship.length);
+  } else {
+    // else clear the board of the ship vertically
+    for (let i = 1; i < ship.length; i++) {
+      const yElement = this.board[x][y + i];
+      console.log("clearing squares! yElement.occupant =", yElement.occupant);
+      yElement.occupant = null;
+      console.log("cleared square! yElement.occupant =", yElement.occupant);
+    }
+    // check that the squares we will place the ship in are not occupied
+
+    for (let i = 1; i < ship.length; i++) {
+      const xElement = this.board[x + i][y];
+      if (xElement.occupant !== null) {
+        console.log('xElement is ', xElement);
+        console.log('xElement.occupant is ', xElement.occupant, 'not null')
+        return false;
+      }
+    }
+    // having removed the ship, replace it with the new direction
+    result = this.placeShipOnBoard(x, y, 0, ship.length);
+  }
+  return result;
 }
 
 class Board {
@@ -165,6 +218,8 @@ class Board {
     this.receiveAttack = receiveAttack;
     this.getShip = getShip;
     this.checkFleetSunk = checkFleetSunk;
+    this.rotateShipinStorage = rotateShipinStorage;
+    this.deleteShip = deleteShip;
   }
 }
 
@@ -197,6 +252,7 @@ export {
   getShip,
   receiveAttack,
   checkForOccupants,
+  deleteShip,
   playerBoard,
   cpuBoard,
 };
