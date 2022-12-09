@@ -1,7 +1,6 @@
 import { controller } from "./modules/controller";
 import * as myInterface from "./modules/interface";
-import eightBit from "./modules/8.bit-green.css";
-//import styles from "./modules/styles.css";
+import styles from "./modules/styles.css";
 
 
 //import css from "./styles.css";

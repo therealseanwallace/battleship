@@ -38,22 +38,22 @@ export function buildShips() {
     componentFactory(element);
     switch (element.name) {
       case "Battleship":
-        document.querySelector(`.${element.class2}`).innerHTML = `
+        document.querySelector(`.${element.class1}`).innerHTML = `
         <img src=${Battleship} alt=${element.name} draggable="true" class="draggable" id="Battleship" data-length="6" data-direction="0">`;
         break;
 
       case "Cruiser":
-        document.querySelector(`.${element.class2}`).innerHTML = `
+        document.querySelector(`.${element.class1}`).innerHTML = `
         <img src=${Cruiser} alt=${element.name} draggable="true" class="draggable" id="Cruiser"  data-length="4" data-direction="0">`;
         break;
 
       case "Destroyer":
-        document.querySelector(`.${element.class2}`).innerHTML = `
+        document.querySelector(`.${element.class1}`).innerHTML = `
         <img src=${Destroyer} alt=${element.name} draggable="true" class="draggable" id="Destroyer"  data-length="3" data-direction="0">`;
         break;
 
       default:
-        document.querySelector(`.${element.class2}`).innerHTML = `
+        document.querySelector(`.${element.class1}`).innerHTML = `
         <img src=${Frigate} alt=${element.name} draggable="true" class="draggable" id="Frigate"  data-length="2" data-direction="0">`;
         break;
     }
@@ -61,16 +61,8 @@ export function buildShips() {
 }
 
 export function shipsPlaced() {
-  console.log("shipsPlaced() called! adding event listener");
-  const draggables = document.querySelectorAll(".draggable");
-  draggables.forEach((draggable) => {
-    console.log("draggable = ", draggable);
-    console.log("drabbale.parentElement = ", draggable.parentElement);
-    // using the x and y data attributes of the parent element,
-    // we can determine whether the ships' positions on the board are valid
-  });
-  const startGame = document.querySelector(".start-game");
-  startGame.addEventListener("click", buildMainGame);
+  const startButton = document.querySelector(".start-button");
+  startButton.addEventListener("click", startGame);
 }
 
 export function rotateShip(e) {
@@ -78,12 +70,15 @@ export function rotateShip(e) {
   console.log("e.target.parentElement is", e.target.parentElement);
   const ship = e.target;
   console.log("rotateShip! ship is", ship);
-  if (checkPlacement(ship.dataset.length)) { 
+  if (checkPlacement(ship.dataset.length)) {
     return;
-   }
-  const xy = [e.target.parentElement.dataset.x, e.target.parentElement.dataset.y];
+  }
+  const xy = [
+    e.target.parentElement.dataset.x,
+    e.target.parentElement.dataset.y,
+  ];
   pubSub.pub("rotateShip", xy);
-  
+
   const parent = ship.parentNode;
   const parentX = Number(parent.dataset.x);
   const parentY = Number(parent.dataset.y);
@@ -140,8 +135,8 @@ export function rotateShip(e) {
 export function cpuAttack() {
   let successfulAttack = false;
   while (!successfulAttack) {
-    const attack = controller.cpu.attack();
-    if (attack) {
+    const thisAttack = controller.cpu.attack();
+    if (thisAttack) {
       successfulAttack = true;
       addAttackListeners();
     }
@@ -216,27 +211,25 @@ export function markSquareHit(array) {
 
   if (isPlayerBoard) {
     square = document.querySelector(`.player-grid-square-${x}-${y}`);
-    console.log("square is", square);
+    console.log("player square is", square);
+    const upperNotifs = document.querySelector(".notifs-upper");
     if (isOccupied) {
       square.classList.add("hit-occupied");
-      document.querySelector(".cpu-alert").textContent =
-        "The computer hit your ship!";
+      upperNotifstextContent = "The computer hit your ship!";
     } else {
       square.classList.add("hit-empty");
-      document.querySelector(".cpu-alert").textContent =
-        "The computer hit an empty square!";
+      upperNotifs.textContent = "The computer hit an empty square!";
     }
   } else {
     square = document.querySelector(`.cpu-grid-square-${x}-${y}`);
-    console.log("square is", square);
+    console.log("cpu square is", square);
+    const lowerNotifs = document.querySelector(".notifs");
     if (isOccupied) {
       square.classList.add("hit-occupied");
-      document.querySelector(".player-alert").textContent =
-        "You hit an enemy ship!";
+      lowerNotifs.textContent = "You hit an enemy ship!";
     } else {
       square.classList.add("hit-empty");
-      document.querySelector(".player-alert").textContent =
-        "You hit an empty square!";
+      lowerNotifs.textContent = "You hit an empty square!";
     }
   }
 }
@@ -251,12 +244,14 @@ export function gameOver(message) {
   document.querySelector(".player-alert").textContent = message;
 }
 
-export function buildMainGame() {
-  const startGameButton = document.querySelector(".start-game");
-  startGameButton.style.display = "none";
-  componentFactory(cpu[0]);
-  buildGrid(2);
+export function startGame() {
+  // removes the title and replaces it with another notification
+  // h3
+  document.querySelector(".notif-upper").innerHTML =
+    '<h3 class="notifs-upper"></h3>';
+
   pubSub.pub("gameStart", "true");
+
   // remove ship-rotation event listeners
   const draggables = document.querySelectorAll(".draggable");
   for (let index = 0; index < draggables.length; index++) {
@@ -264,6 +259,8 @@ export function buildMainGame() {
     element.removeEventListener("click", rotateShip);
     element.removeEventListener("dragstart", drag);
   }
+
+  // remove drop event listeners
   const squares = document.querySelectorAll(".placement-grid-square");
   console.log("squares = ", squares);
   for (let i = 0; i < squares.length; i++) {
@@ -280,17 +277,13 @@ let isBadlyPlaced = {
   4: true,
   3: true,
   2: true,
-}
-
-
+};
 
 export function getPlayerMove() {
   // provide the player with some sort of prompt. for now, console
-  console.log("please make your move!");
-  const gridSquares = document.querySelectorAll(".cpu-grid-square");
-  gridSquares.forEach((square) => {
-    square.addEventListener("click", attack);
-  });
+  document.querySelector(".notifs").textContent =
+    "Your move! Please attack an enemy square by clicking.";
+  addAttackListeners();
 }
 
 export function drop(e) {
@@ -337,17 +330,27 @@ export function addDragListeners() {
 }
 
 export function buildShipPlacement() {
-  document.querySelector(".content").innerHTML = "";
+  // Remove the event listener to prevent running this function again
+  document
+    .querySelector(".start-button")
+    .removeEventListener("click", buildShipPlacement);
+
+  // Build the ship placement grids
   for (let i = 0; i < shipPlacement.length - 1; i += 1) {
     const element = shipPlacement[i];
     componentFactory(element);
   }
   buildGrid(1);
+  buildGrid(2);
   buildShips();
   addDragListeners();
+
+  // Sends the player a message to place their ships
+  document.querySelector(".notifs").textContent =
+    "Place your ships! Click to rotate a placed ship.";
 }
 
-// gets the DOM nodes' info for the first screen from displayObjects
+// Get the DOM nodes' info for the first screen from displayObjects
 // and draws them
 
 export function allowDrop(e) {
@@ -396,8 +399,8 @@ function checkPlacement(ship) {
 }
 
 export function placedRight(ship) {
-  console.log('placedRight called! isBadlyPlaced is: ', isBadlyPlaced)
-  switch (ship) { 
+  console.log("placedRight called! isBadlyPlaced is: ", isBadlyPlaced);
+  switch (ship) {
     case 6:
       isBadlyPlaced[6] = false;
       break;
@@ -411,12 +414,12 @@ export function placedRight(ship) {
       isBadlyPlaced[2] = false;
       break;
   }
-  console.log('placedRight called! isBadlyPlaced is: ', isBadlyPlaced)
+  console.log("placedRight called! isBadlyPlaced is: ", isBadlyPlaced);
 }
 
 export function placedWrong(ship) {
-  console.log('placedWrong called! isBadlyPlaced is: ', isBadlyPlaced)
-  switch (ship) { 
+  console.log("placedWrong called! isBadlyPlaced is: ", isBadlyPlaced);
+  switch (ship) {
     case 6:
       isBadlyPlaced[6] = true;
       break;
@@ -430,7 +433,7 @@ export function placedWrong(ship) {
       isBadlyPlaced[2] = true;
       break;
   }
-  console.log('placedWrong! isBadlyPlaced is: ', isBadlyPlaced)
+  console.log("placedWrong! isBadlyPlaced is: ", isBadlyPlaced);
 }
 
 class Interface {
@@ -444,7 +447,7 @@ class Interface {
     this.attack = attack;
     this.addAttackListeners = addAttackListeners;
     this.markSquareHit = markSquareHit;
-    this.buildMainGame = buildMainGame;
+    this.startGame = startGame;
     this.drop = drop;
     this.addDragListeners = addDragListeners;
     this.buildShipPlacement = buildShipPlacement;
