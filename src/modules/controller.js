@@ -111,8 +111,13 @@ class Controller {
     this.players.cpu.board.gameBoard.placeShipOnBoard(0, 3, 0, 2);
   }
 
-  shipPlaced() {
+  shipPlaced(result) {
     this.shipPlacedCount += 1;
+    console.log('********shipPlaced! result is', result);
+    const type = result.length;
+    pubSub.pub("placedRight", type);
+    console.log('type is ', type);
+
     if (this.shipPlacedCount === 4) {
       this.shipsPlaced = true;
       pubSub.pub("shipsPlaced", iface.shipsPlaced);
@@ -171,15 +176,19 @@ class Controller {
   }
 
   placeHuman(ship) {
+    console.log('placeHuman called! ship is ', ship);
     const result = this.players.human.board.placeShipOnBoard(
       ship[0],
       ship[1],
       ship[2],
       ship[3]
     );
+    console.log('result is ', result);
     if (result !== false) {
-      placedShip();
+      placedShip(result);
+      return;
     }
+    pubSub.pub("placedWrong", ship[3]);
   }
 
   rotateShip(coords) {
@@ -221,6 +230,8 @@ pubSub.sub("markSquareHit", iface.markSquareHit);
 pubSub.sub("sunk", iface.sunk);
 pubSub.sub("gameOver", iface.gameOver);
 pubSub.sub("invalid", iface.invalidMove);
+pubSub.sub("placedRight", iface.placedRight);
+pubSub.sub("placedWrong", iface.placedWrong);
 console.log("subs are", pubSub.returnSubscribers("placeShip"));
 
 export { pubSub };

@@ -5,7 +5,6 @@ import Cruiser from "../resources/Cruiser.png";
 import Battleship from "../resources/Battleship.png";
 import Destroyer from "../resources/Destroyer.png";
 import Frigate from "../resources/Frigate.png";
-import css from "./styles.css";
 import { pubSub } from "./controller";
 
 export function buildGrid(player) {
@@ -77,21 +76,14 @@ export function shipsPlaced() {
 export function rotateShip(e) {
   console.log("rotateShip! e.target is", e.target);
   console.log("e.target.parentElement is", e.target.parentElement);
-  if (
-    e.target.parentElement.dataset.x + e.target.dataset.length > 9 ||
-    e.target.parentElement.dataset.y + e.target.dataset.length > 9 ||
-    e.target.parentElement.dataset.y - e.target.dataset.length < 0 ||
-    e.target.parentElement.dataset.x - e.target.dataset.length < 0
-  ) {
-    console.log("ship is too big to rotate!");
-    return;
-  }
-  pubSub.pub("rotateShip", [
-    e.target.parentElement.dataset.x,
-    e.target.parentElement.dataset.y,
-  ]);
   const ship = e.target;
   console.log("rotateShip! ship is", ship);
+  if (checkPlacement(ship.dataset.length)) { 
+    return;
+   }
+  const xy = [e.target.parentElement.dataset.x, e.target.parentElement.dataset.y];
+  pubSub.pub("rotateShip", xy);
+  
   const parent = ship.parentNode;
   const parentX = Number(parent.dataset.x);
   const parentY = Number(parent.dataset.y);
@@ -206,8 +198,9 @@ export function sunk(isPlayerBoard) {
   } else {
     console.log("SHOULD BE WRITING TO PLAYER ALERT!");
     const playerAlert = document.querySelector(".player-alert");
-    console.log("playeraAlert.textContent is", playerAlert.textContent);
+    console.log("playerAlert.textContent is", playerAlert.textContent);
     playerAlert.textContent = "You sunk an enemy ship!";
+    console.log("playerAlert.textContent is", playerAlert.textContent);
     /*document.querySelector(".player-alert").textContent =
       "You sunk an enemy ship!";*/
   }
@@ -281,6 +274,15 @@ export function buildMainGame() {
 }
 
 let dragStorage = "test";
+
+let isBadlyPlaced = {
+  6: true,
+  4: true,
+  3: true,
+  2: true,
+}
+
+
 
 export function getPlayerMove() {
   // provide the player with some sort of prompt. for now, console
@@ -386,7 +388,49 @@ export function drag(e) {
     pubSub.pub("moveShip", result);
   }
   e.dataTransfer.setData("img", e.target.id);
-  console.log("dragStorage is", this.dragStorage);
+  console.log("dragStorage is", dragStorage);
+}
+
+function checkPlacement(ship) {
+  return isBadlyPlaced[ship];
+}
+
+export function placedRight(ship) {
+  console.log('placedRight called! isBadlyPlaced is: ', isBadlyPlaced)
+  switch (ship) { 
+    case 6:
+      isBadlyPlaced[6] = false;
+      break;
+    case 4:
+      isBadlyPlaced[4] = false;
+      break;
+    case 3:
+      isBadlyPlaced[3] = false;
+      break;
+    default:
+      isBadlyPlaced[2] = false;
+      break;
+  }
+  console.log('placedRight called! isBadlyPlaced is: ', isBadlyPlaced)
+}
+
+export function placedWrong(ship) {
+  console.log('placedWrong called! isBadlyPlaced is: ', isBadlyPlaced)
+  switch (ship) { 
+    case 6:
+      isBadlyPlaced[6] = true;
+      break;
+    case 4:
+      isBadlyPlaced[4] = true;
+      break;
+    case 3:
+      isBadlyPlaced[3] = true;
+      break;
+    default:
+      isBadlyPlaced[2] = true;
+      break;
+  }
+  console.log('placedWrong! isBadlyPlaced is: ', isBadlyPlaced)
 }
 
 class Interface {
@@ -406,7 +450,7 @@ class Interface {
     this.buildShipPlacement = buildShipPlacement;
     this.allowDrop = allowDrop;
     this.buildInterface = buildInterface;
-    this.dragStorage = [];
+    this.placedRight = placedRight;
   }
 }
 

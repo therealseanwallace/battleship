@@ -29,10 +29,12 @@ function placeShipOnBoard(x, y, horizVert, shipType, ID) {
 
   // the following if statements check that this is a legal ship placement
   if (horizVert === 0) {
-    if (x + newShipLength > 9) {
+    if (x + newShipLength > 10) {
+      console.log('x + newShipLength = ', x + newShipLength)
       return false;
     }
-  } else if (y - newShipLength < 0) {
+  } else if (y - newShipLength < -1) {
+    console.log('y - newShipLength = ', y - newShipLength)
     return false;
   }
   if (this.checkForOccupants(x, y, horizVert, newShipLength)) {
@@ -164,6 +166,9 @@ function deleteShip(ID) {
 function rotateShipinStorage(x, y) {
   // find the ship at the given coordinates and get its direction
   console.log('rotating ship! this.board[x][y] is', this.board[x][y])
+  /*if (this.board[x][y].occupant === null) { 
+    return false;
+  }*/
   const shipID = this.board[x][y].occupant;
   console.log('shipID is', shipID);
   const ship = this.getShip(this.board[x][y].occupant);
