@@ -34,7 +34,6 @@ class PubSub {
 
   pub(topic, payload) {
     console.log("pub called! topic, payload are ", topic, payload);
-    console.log("this is ", this);
     this[topic].subscribers.forEach((sub) => sub(payload));
   }
 
@@ -94,7 +93,7 @@ class Controller {
     }
     if (whoseTurn === 1) {
       // prompt player for a move
-      iface.getPlayerMove();
+      pubSub.pub("getPlayersMove", iface.getPlayersMove);
     } else {
       // prompt cpu for a move
       getCPUMove();
@@ -122,40 +121,53 @@ class Controller {
 
   playersMove(move) {
     const result = this.players.cpu.board.receiveAttack(move);
+    console.log('playersMove! move is ', move);
+    let resultArray = [];
+    resultArray.push(move[0], move[1]);
     if (result === "hit") {
-      iface.markSquareHit(move[0], move[1], true, false);
+      resultArray.push(true, false);
     } else if (result === "miss") {
-      iface.markSquareHit(move[0], move[1], false, false);
+      resultArray.push(false, false);
     } else if (result === "sunk") {
-      iface.markSquareHit(move[0], move[1], true, false);
-      iface.sunk(move[0], move[1], false);
+      resultArray.push(true, false);
+      // change the below to use pub/sub too
+      pubSub.pub("sunk", true);
     } else if (result === "gameOver") {
       this.gameOver = true;
-      iface.gameOver("You win");
+      pubSub.pub("gameOver", "You win");
     } else if (result === "false") {
-      iface.invalidMove(1);
+      pubSub.pub("invalid");
       this.gameFlow(1);
     }
+    pubSub.pub("markSquareHit", resultArray);
     this.gameFlow(2);
   }
 
   getCPUMove() {
     const move = this.players.cpu.attack();
+    console.log('getCPUMove! move is ', move);
     const result = this.players.human.board.receiveAttack(move);
+    console.log('getCPUMove! result is ', result)
+    let resultArray = [];
+    resultArray.push(move[0], move[1]);
     if (result === "hit") {
-      iface.markSquareHit(move[0], move[1], true, true);
+      resultArray.push(true, true);
     } else if (result === "miss") {
-      iface.markSquareHit(move[0], move[1], false, true);
+      resultArray.push(false, true);
     } else if (result === "sunk") {
-      iface.markSquareHit(move[0], move[1], true, true);
-      iface.sunk(true);
+      resultArray.push(true, true);
+      pubSub.pub("sunk", false);
     } else if (result === "gameOver") {
-      iface.gameOver("The computer wins!");
+      pubSub.pub("gameOver", "The computer wins!");
       this.gameOver = true;
     } else if (result === "false") {
       getCPUMove();
     }
-    this.gameFlow(1);
+    console.log('passed the if/else');
+    if (result !== false) { 
+      pubSub.pub("markSquareHit", resultArray);
+      this.gameFlow(1);
+    }
   }
 
   placeHuman(ship) {
@@ -174,6 +186,16 @@ class Controller {
     console.log("pubSub called rotateShip!", coords);
     this.players.human.board.rotateShipinStorage(Number(coords[0]), Number(coords[1]));
   }
+
+  moveShip(details) {
+    console.log("pubSub called moveShip! details are ", details);
+    console.log("this.players.human.board = ", this.players.human.board);
+    console.log('moveShip = ', moveShip);
+    console.log('this.players.human.board.getShip = ', this.players.human.board.getShip);
+    this.players.human.board.moveShipInStorage(details[0], details[1], details[2], details[3]);
+  }
+
+
 }
 
 const controller = new Controller();
@@ -184,6 +206,8 @@ const playersMove = controller.playersMove.bind(controller);
 const getCPUMove = controller.getCPUMove.bind(controller);
 const placeHumanShip = controller.placeHuman.bind(controller);
 const rotateShip = controller.rotateShip.bind(controller);
+const moveShip = controller.moveShip.bind(controller);
+
 
 pubSub.sub("placeShip", placeHumanShip);
 pubSub.sub("shipsPlaced", iface.shipsPlaced);
@@ -191,6 +215,12 @@ pubSub.sub("gameStart", startGame);
 pubSub.sub("getPlayersMove", iface.getPlayerMove);
 pubSub.sub("playersMove", playersMove);
 pubSub.sub("rotateShip", rotateShip);
+pubSub.sub("moveShip", moveShip);
+pubSub.sub("getPlayerMove", iface.getPlayerMove);
+pubSub.sub("markSquareHit", iface.markSquareHit);
+pubSub.sub("sunk", iface.sunk);
+pubSub.sub("gameOver", iface.gameOver);
+pubSub.sub("invalid", iface.invalidMove);
 console.log("subs are", pubSub.returnSubscribers("placeShip"));
 
 export { pubSub };

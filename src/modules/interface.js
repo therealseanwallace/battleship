@@ -1,3 +1,4 @@
+/* eslint-disable no-sequences */
 import { componentFactory } from "./componentFactory";
 import { displayObjects, shipPlacement, ships, cpu } from "./displayObjects";
 import Cruiser from "../resources/Cruiser.png";
@@ -76,7 +77,19 @@ export function shipsPlaced() {
 export function rotateShip(e) {
   console.log("rotateShip! e.target is", e.target);
   console.log("e.target.parentElement is", e.target.parentElement);
-  pubSub.pub("rotateShip", [e.target.parentElement.dataset.x, e.target.parentElement.dataset.y]);
+  if (
+    e.target.parentElement.dataset.x + e.target.dataset.length > 9 ||
+    e.target.parentElement.dataset.y + e.target.dataset.length > 9 ||
+    e.target.parentElement.dataset.y - e.target.dataset.length < 0 ||
+    e.target.parentElement.dataset.x - e.target.dataset.length < 0
+  ) {
+    console.log("ship is too big to rotate!");
+    return;
+  }
+  pubSub.pub("rotateShip", [
+    e.target.parentElement.dataset.x,
+    e.target.parentElement.dataset.y,
+  ]);
   const ship = e.target;
   console.log("rotateShip! ship is", ship);
   const parent = ship.parentNode;
@@ -185,17 +198,28 @@ export function addAttackListeners() {
 }
 
 export function sunk(isPlayerBoard) {
+  console.log("sunk called! isPlayerBoard is", isPlayerBoard);
   if (!isPlayerBoard) {
+    console.log("SHOULD BE WRITING TO CPU ALERT!");
     document.querySelector(".cpu-alert").textContent =
       "The computer sunk your ship!";
   } else {
-    document.querySelector(".player-alert").textContent =
-      "You sunk an enemy ship!";
+    console.log("SHOULD BE WRITING TO PLAYER ALERT!");
+    const playerAlert = document.querySelector(".player-alert");
+    console.log("playeraAlert.textContent is", playerAlert.textContent);
+    playerAlert.textContent = "You sunk an enemy ship!";
+    /*document.querySelector(".player-alert").textContent =
+      "You sunk an enemy ship!";*/
   }
 }
 
-export function markSquareHit(x, y, isOccupied, isPlayerBoard) {
+export function markSquareHit(array) {
+  console.log("markSquareHit! array is", array);
   let square;
+  const x = array[0];
+  const y = array[1];
+  const isOccupied = array[2];
+  const isPlayerBoard = array[3];
 
   if (isPlayerBoard) {
     square = document.querySelector(`.player-grid-square-${x}-${y}`);
@@ -224,14 +248,9 @@ export function markSquareHit(x, y, isOccupied, isPlayerBoard) {
   }
 }
 
-export function invalidMove(player) {
-  if (player === 1) {
-    document.querySelector(".cpu-alert").textContent =
-      "The computer tried to attack an invalid square!";
-  } else {
-    document.querySelector(".player-alert").textContent =
-      "You tried to attack an invalid square!";
-  }
+export function invalidMove() {
+  document.querySelector(".player-alert").textContent =
+    "You tried to attack an invalid square!";
 }
 
 export function gameOver(message) {
@@ -345,6 +364,27 @@ export function buildInterface() {
 export function drag(e) {
   dragStorage = e.target;
   console.log("drag! e.target = ", e.target);
+  console.log("drag! e.target.parentElement = ", e.target.parentElement);
+  if (e.target.parentElement.classList.contains("placement-grid-square")) {
+    console.log("this is a square!");
+    console.log(
+      "e.target.parentElement.dataset.x = ",
+      e.target.parentElement.dataset.x
+    );
+    console.log(
+      "e.target.parentElement.dataset.y = ",
+      e.target.parentElement.dataset.y
+    );
+    const x = Number(e.target.parentElement.dataset.x);
+    const y = Number(e.target.parentElement.dataset.y);
+    const result = [
+      x,
+      y,
+      Number(e.target.dataset.direction),
+      Number(e.target.dataset.length),
+    ];
+    pubSub.pub("moveShip", result);
+  }
   e.dataTransfer.setData("img", e.target.id);
   console.log("dragStorage is", this.dragStorage);
 }

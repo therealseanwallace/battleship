@@ -152,13 +152,11 @@ function checkForOccupants(x, y, horizVert, length) {
 function deleteShip(ID) {
   // loops through this.shipArray. upon finding ship with the given ID,
   // deletes it
-  const array = this.shipArray;
-  for (let i = 0; i < array.length; i += 1) {
-    const ship = array[i];
-    if (ship.shipID === ID) {
-      console.log('found ship! deleting it!')
-      array.splice(i, 1);
-      console.log('ship deleted! this.shipArray is now', this.shipArray)
+  for (let i = 0; i < this.shipArray.length; i += 1) { 
+    if (this.shipArray[i].shipID === ID) {
+      console.log('found ship!! this.shipArray is', this.shipArray);
+      this.shipArray.splice(i, 1);
+      console.log('deleted ship! this.shipArray is now', this.shipArray);
     }
   }
 }
@@ -224,6 +222,40 @@ function rotateShipinStorage(x, y) {
   return result;
 }
 
+function moveShipInStorage(x, y, direction, length) {
+  console.log('called moveShipInStorage!!');
+  // find the ship at the given coordinates and get its direction
+  const shipID = this.board[x][y].occupant;
+  const ship = this.getShip(this.board[x][y].occupant);
+  console.log('ship is', ship)
+  if (ship === undefined) { 
+    // if there is no ship at these coords, it's because there was an invalid
+    // ship placement. Thererefore, there is no ship to delete. So, return.
+    return;
+  }
+  const dir = ship.direction;
+
+  // delete the ship from shipArray
+  this.deleteShip(shipID);
+
+  // clear the board of the ship
+  if (dir === 0) {
+    // if the ship is horizontal, clear the board of the ship horizontally
+    for (let i = 0; i < length; i++) {
+      const xElement = this.board[x + i][y];
+      xElement.occupant = null;
+    }
+  } else {
+    // else clear the board of the ship vertically
+    for (let i = 0; i < length; i++) {
+      const yElement = this.board[x][y - i];
+      yElement.occupant = null;
+    }
+  }
+
+  // place the ship on the board
+}
+
 class Board {
   constructor() {
     this.board = buildBoard();
@@ -235,6 +267,7 @@ class Board {
     this.checkFleetSunk = checkFleetSunk;
     this.rotateShipinStorage = rotateShipinStorage;
     this.deleteShip = deleteShip;
+    this.moveShipInStorage = moveShipInStorage;
   }
 }
 
@@ -268,6 +301,7 @@ export {
   receiveAttack,
   checkForOccupants,
   deleteShip,
+  moveShipInStorage,
   playerBoard,
   cpuBoard,
 };
