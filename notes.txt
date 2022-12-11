@@ -5,3 +5,21 @@ for the interface to have access to those objects. Instead, we should
 return several functions that correspond to the actions which players need
 to take in the interface, which will call the player objects from within
 the controller IIFE, avoiding exposing the player objects publicly
+
+
+
+
+battleship vector from:
+https://freesvg.org/military-ship-vector-drawing
+
+
+font
+
+retrogaming font:
+
+You must credit the author Copy this link on your web
+<div>Font made from <a href="http://www.onlinewebfonts.com">oNline Web Fonts</a>is licensed by CC BY 3.0</div>
+OR
+
+
+<a href="http://www.onlinewebfonts.com">oNline Web Fonts</a>
