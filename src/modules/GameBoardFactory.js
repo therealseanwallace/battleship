@@ -134,7 +134,7 @@ function checkForOccupants(x, y, horizVert, length) {
     for (let i = 0; i < length; i++) {
       const element = this.board[x + i][y];
       if (element.occupant !== null) {
-        return true;
+        return true
       }
     }
   } else {

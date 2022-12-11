@@ -5,10 +5,22 @@ export const displayObjects = [
     parent: "body",
   },
   {
-    name: "gameContainer",
+    name: "bezel",
     nodeType: "div",
     parent: "main",
+    class1: "bezel",
+  },
+  {
+    name: "gameContainer",
+    nodeType: "div",
+    parent: ".bezel",
     class1: "game-container",
+  },
+  {
+    name: "scanline",
+    nodeType: "div",
+    parent: ".game-container",
+    class1: "scanline",
   },
   {
     name: "titleContainer",
@@ -105,7 +117,7 @@ export const displayObjects = [
     parent: ".game-container",
     class1: "start-button",
     inputType: "button",
-    value: "Start",
+    value: "START",
   },
   {
     name: "placementGridSquare",

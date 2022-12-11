@@ -354,7 +354,7 @@ export function buildShipPlacement() {
 
   // Sends the player a message to place ships
   document.querySelector(".notif-left").innerHTML =
-    '<h2 class="notif human-notif">Drag and drop to place your ships! Click the left square to rotate a placed ship.</h2>';
+    '<h2 class="notif human-notif">Drag and drop to place your ships! Click its left square to rotate a placed ship.</h2>';
 }
 
 // Get the DOM nodes' info for the first screen from displayObjects
