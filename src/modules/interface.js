@@ -13,7 +13,7 @@ export function buildGrid(player) {
   let cpuSqNum = 0;
   for (let i = 9; i > -1; i--) {
     for (let j = 0; j < 10; j++) {
-      const newSquare = shipPlacement[shipPlacement.length - 1];
+      const newSquare = displayObjects[displayObjects.length - 1];
       newSquare.xy = [j, i, sqNum, player];
       sqNum += 1;
       if (player === 1) {
@@ -63,6 +63,8 @@ export function buildShips() {
 export function shipsPlaced() {
   const startButton = document.querySelector(".start-button");
   startButton.addEventListener("click", startGame);
+  document.querySelector(".notif-left").innerHTML =
+    "Ships placed! Click start to begin!";
 }
 
 export function rotateShip(e) {
@@ -138,9 +140,15 @@ export function cpuAttack() {
     const thisAttack = controller.cpu.attack();
     if (thisAttack) {
       successfulAttack = true;
-      addAttackListeners();
     }
   }
+}
+
+export function removeAttackListeners() {
+  const squares = document.querySelectorAll(".cpu-grid-square");
+  squares.forEach((square) => {
+    square.removeEventListener("click", attack);
+  });
 }
 
 function attack(e) {
@@ -150,19 +158,8 @@ function attack(e) {
   console.log("x is", x);
   console.log("y is", y);
   pubSub.pub("playersMove", [x, y]);
-
-  /*const humanAttackResult = controller.human.attack(x, y);
-  if (humanAttackResult) {
-    removeAttackListeners();
-  }
-  console.log("humanAttackResult is", humanAttackResult);*/
-}
-
-export function removeAttackListeners() {
-  const squares = document.querySelectorAll(".cpu-grid-square");
-  squares.forEach((square) => {
-    square.removeEventListener("click", attack);
-  });
+  removeAttackListeners();
+  setTimeout(addAttackListeners, 100);
 }
 
 /*export function miss(move, player) {
@@ -187,18 +184,39 @@ export function addAttackListeners() {
 export function sunk(isPlayerBoard) {
   console.log("sunk called! isPlayerBoard is", isPlayerBoard);
   if (!isPlayerBoard) {
-    console.log("SHOULD BE WRITING TO CPU ALERT!");
-    document.querySelector(".cpu-alert").textContent =
-      "The computer sunk your ship!";
+    addNotif("The computer sunk your ship!", 2);
   } else {
-    console.log("SHOULD BE WRITING TO PLAYER ALERT!");
-    const playerAlert = document.querySelector(".player-alert");
-    console.log("playerAlert.textContent is", playerAlert.textContent);
-    playerAlert.textContent = "You sunk an enemy ship!";
-    console.log("playerAlert.textContent is", playerAlert.textContent);
-    /*document.querySelector(".player-alert").textContent =
-      "You sunk an enemy ship!";*/
+    addNotif("You sunk an enemy ship!", 2);
   }
+}
+
+export function updateNotsDisplay() {
+  // select and clear both the human and cpu notification displays
+
+  const leftNotifs = document.querySelector(".notif-left");
+  leftNotifs.innerHTML = "";
+
+  const rightNotifs = document.querySelector(".notif-right");
+  rightNotifs.innerHTML = "";
+
+  // initialize two strings to hold the html for the notifications
+  let leftResult = "";
+  let rightResult = "";
+
+  // get the notification arrays
+  const { instructions, gameNots } = this;
+
+  // assemble the html for the notifications
+  for (let i = 0; i < instructions.length; i++) {
+    leftResult += `<h3 class="notif instruction">${instructions[i]}></h3>`;
+  }
+  for (let i = 0; i < gameNots.length; i++) {
+    rightResult += `<h3 class="notif cpu-notif">${gameNots[i]}></h3>`;
+  }
+
+  // write the html to the notification displays
+  leftNotifs.innerHTML = leftResult;
+  rightNotifs.innerHTML = rightResult;
 }
 
 export function markSquareHit(array) {
@@ -212,24 +230,22 @@ export function markSquareHit(array) {
   if (isPlayerBoard) {
     square = document.querySelector(`.player-grid-square-${x}-${y}`);
     console.log("player square is", square);
-    const upperNotifs = document.querySelector(".notifs-upper");
     if (isOccupied) {
       square.classList.add("hit-occupied");
-      upperNotifstextContent = "The computer hit your ship!";
+      addNotif("The computer hit your ship!", 2);
     } else {
       square.classList.add("hit-empty");
-      upperNotifs.textContent = "The computer hit an empty square!";
+      addNotif("The computer hit an empty square!", 2);
     }
   } else {
     square = document.querySelector(`.cpu-grid-square-${x}-${y}`);
     console.log("cpu square is", square);
-    const lowerNotifs = document.querySelector(".notifs");
     if (isOccupied) {
       square.classList.add("hit-occupied");
-      lowerNotifs.textContent = "You hit an enemy ship!";
+      addNotif("You hit an enemy ship!", 2);
     } else {
       square.classList.add("hit-empty");
-      lowerNotifs.textContent = "You hit an empty square!";
+      addNotif("You hit an empty square!", 2);
     }
   }
 }
@@ -240,16 +256,18 @@ export function invalidMove() {
 }
 
 export function gameOver(message) {
-  document.querySelector(".cpu-alert").textContent = "";
-  document.querySelector(".player-alert").textContent = message;
+  console.log('gameOver called!')
+  document.querySelector(".notif-left").innerHTML =
+    '<h2 class="notif instruction">Game Over!</h2>';
+  document.querySelector(".notif-right").innerHTML =
+  `<h2 class="notif instruction">${message}</h2>`;
 }
 
 export function startGame() {
-  // removes the title and replaces it with another notification
-  // h3
-  document.querySelector(".notif-upper").innerHTML =
-    '<h3 class="notifs-upper"></h3>';
+  // clear the notification area
+  document.querySelector(".notif-left").innerHTML = "";
 
+  // tell the controller to start the game
   pubSub.pub("gameStart", "true");
 
   // remove ship-rotation event listeners
@@ -268,6 +286,7 @@ export function startGame() {
     element.removeEventListener("drop", drop);
     element.removeEventListener("dragover", allowDrop);
   }
+  bindAddAttackListeners();
 }
 
 let dragStorage = "test";
@@ -281,9 +300,7 @@ let isBadlyPlaced = {
 
 export function getPlayerMove() {
   // provide the player with some sort of prompt. for now, console
-  document.querySelector(".notifs").textContent =
-    "Your move! Please attack an enemy square by clicking.";
-  addAttackListeners();
+  addNotif("Your move! Please attack an enemy square by clicking.", 1);
 }
 
 export function drop(e) {
@@ -330,24 +347,14 @@ export function addDragListeners() {
 }
 
 export function buildShipPlacement() {
-  // Remove the event listener to prevent running this function again
   document
     .querySelector(".start-button")
     .removeEventListener("click", buildShipPlacement);
-
-  // Build the ship placement grids
-  for (let i = 0; i < shipPlacement.length - 1; i += 1) {
-    const element = shipPlacement[i];
-    componentFactory(element);
-  }
-  buildGrid(1);
-  buildGrid(2);
-  buildShips();
   addDragListeners();
 
-  // Sends the player a message to place their ships
-  document.querySelector(".notifs").textContent =
-    "Place your ships! Click to rotate a placed ship.";
+  // Sends the player a message to place ships
+  document.querySelector(".notif-left").innerHTML =
+    '<h2 class="notif human-notif">Drag and drop to place your ships! Click the left square to rotate a placed ship.</h2>';
 }
 
 // Get the DOM nodes' info for the first screen from displayObjects
@@ -358,12 +365,21 @@ export function allowDrop(e) {
 }
 
 export function buildInterface() {
-  displayObjects.forEach((element) => {
+  for (let i = 0; i < displayObjects.length - 1; i++) {
+    const element = displayObjects[i];
     componentFactory(element);
-  });
+  }
   document
     .querySelector(".start-button")
     .addEventListener("click", buildShipPlacement);
+  buildGrid(1);
+  buildGrid(2);
+  buildShips();
+
+  // add welcome message to the notification area
+
+  document.querySelector(".notif-left").innerHTML =
+    '<h2 class="notif notif-human">Welcome to Battleship! Click Start to place your ships!</h2>';
 }
 
 export function drag(e) {
@@ -450,13 +466,39 @@ class Interface {
     this.startGame = startGame;
     this.drop = drop;
     this.addDragListeners = addDragListeners;
-    this.buildShipPlacement = buildShipPlacement;
     this.allowDrop = allowDrop;
     this.buildInterface = buildInterface;
     this.placedRight = placedRight;
+    this.instructions = [];
+    this.gameNots = [];
+    this.updateNotsDisplay = updateNotsDisplay;
+    this.markSquare = markSquare;
+  }
+
+  addNotif(notif, player) {
+    if (player === 1) {
+      if (this.instructions.length > 2) {
+        this.instructions.shift();
+      }
+      this.instructions.push(notif);
+    } else {
+      if (this.gameNots.length > 2) {
+        this.gameNots.shift();
+      }
+      this.gameNots.push(notif);
+    }
+    this.updateNotsDisplay();
   }
 }
 
 const iface = new Interface();
+
+const addNotif = iface.addNotif.bind(iface);
+const bindAddAttackListeners = iface.addAttackListeners.bind(iface);
+
+function markSquare(square) {
+  const mark = iface.markSquareHit.bind(iface);
+  mark(square);
+}
 
 export { iface };

@@ -19,6 +19,7 @@ class PubSub {
     }
     this[topic].subscribers.push(subscriber);
     console.log("subbed! this[topic] = ", this[topic]);
+    console.log('subbed! this is ', this)
   }
 
   unsub(topic, subscriber) {
@@ -34,6 +35,7 @@ class PubSub {
 
   pub(topic, payload) {
     console.log("pub called! topic, payload are ", topic, payload);
+    console.log('this is ', this) 
     this[topic].subscribers.forEach((sub) => sub(payload));
   }
 
@@ -93,7 +95,7 @@ class Controller {
     }
     if (whoseTurn === 1) {
       // prompt player for a move
-      pubSub.pub("getPlayersMove", iface.getPlayersMove);
+      pubSub.pub("getPlayersMove", iface.getPlayerMove);
     } else {
       // prompt cpu for a move
       getCPUMove();
@@ -216,7 +218,7 @@ const getCPUMove = controller.getCPUMove.bind(controller);
 const placeHumanShip = controller.placeHuman.bind(controller);
 const rotateShip = controller.rotateShip.bind(controller);
 const moveShip = controller.moveShip.bind(controller);
-
+const markSquare = iface.markSquareHit.bind(iface);
 
 pubSub.sub("placeShip", placeHumanShip);
 pubSub.sub("shipsPlaced", iface.shipsPlaced);
@@ -226,12 +228,13 @@ pubSub.sub("playersMove", playersMove);
 pubSub.sub("rotateShip", rotateShip);
 pubSub.sub("moveShip", moveShip);
 pubSub.sub("getPlayerMove", iface.getPlayerMove);
-pubSub.sub("markSquareHit", iface.markSquareHit);
+pubSub.sub("markSquareHit", markSquare);
 pubSub.sub("sunk", iface.sunk);
 pubSub.sub("gameOver", iface.gameOver);
 pubSub.sub("invalid", iface.invalidMove);
 pubSub.sub("placedRight", iface.placedRight);
 pubSub.sub("placedWrong", iface.placedWrong);
+pubSub.sub("updateNots", iface.updateNots);
 console.log("subs are", pubSub.returnSubscribers("placeShip"));
 
 export { pubSub };

@@ -80,9 +80,6 @@ function checkFleetSunk() {
       result = false;
     }
   }
-  if (result) {
-    alert("game over!!");
-  }
   return result;
 }
 

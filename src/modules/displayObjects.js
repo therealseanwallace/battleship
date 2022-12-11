@@ -11,6 +11,12 @@ export const displayObjects = [
     class1: "game-container",
   },
   {
+    name: "titleContainer",
+    nodeType: "div",
+    parent: ".game-container",
+    class1: "title-container",
+  },
+  {
     name: "notifArea",
     nodeType: "div",
     parent: ".game-container",
@@ -20,39 +26,21 @@ export const displayObjects = [
     name: "notifUpper",
     nodeType: "div",
     parent: ".notif-area",
-    class1: "notif-upper",
+    class1: "notif-left",
   },
-  { 
+  {
     name: "notifLower",
     nodeType: "div",
     parent: ".notif-area",
-    class1: "notif-lower",
+    class1: "notif-right",
   },
   {
     name: "mainTitle",
     nodeType: "h1",
-    parent: ".notif-upper",
+    parent: ".title-container",
     class1: "title",
     text: "BATTLESHIP",
   },
-  {
-    name: "notifs",
-    nodeType: "h3",
-    parent: ".notif-lower",
-    class1: "notifs",
-    text: "",
-  },
-  {
-    name: "startButton",
-    nodeType: "input",
-    parent: ".game-container",
-    class1: "start-button",
-    inputType: "button",
-    value: "Start",
-  },
-]
-
-export const shipPlacement = [
   {
     name: "placementContainer",
     nodeType: "div",
@@ -112,12 +100,20 @@ export const shipPlacement = [
     class1: "cpu-board",
   },
   {
+    name: "startButton",
+    nodeType: "input",
+    parent: ".game-container",
+    class1: "start-button",
+    inputType: "button",
+    value: "Start",
+  },
+  {
     name: "placementGridSquare",
     nodeType: "div",
     parent: ".placement-grid",
     class1: "placement-grid-square",
-  }
-]
+  },
+];
 
 export const ships = [
   {
@@ -144,4 +140,21 @@ export const ships = [
     parent: ".frigate-container",
     class1: "frigate-placement",
   },
-]
+];
+
+export const notifs = [
+  {
+    name: "notifHuman",
+    nodeType: "h3",
+    parent: ".notif-left",
+    class1: "notif",
+    class2: "notif-human",
+  },
+  {
+    name: "notifCpu",
+    nodeType: "h3",
+    parent: ".notif-right",
+    class1: "notif",
+    class2: "notif-cpu",
+  },
+];

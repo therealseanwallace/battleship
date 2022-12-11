@@ -1,3 +1,11 @@
+@font-face {
+  font-family: "Retro";
+  src: url("./retro.woff2")
+      format("woff2");
+  font-weight: 400;
+  font-style: normal;
+}
+
 /* RESET STYLES */
 
 *,
@@ -44,10 +52,6 @@ h6 {
   isolation: isolate;
 }
 
-* {
-  font-family: "Merriweather", serif;
-}
-
 /* STYLES */
 
 body {
@@ -55,7 +59,6 @@ body {
   margin: auto;
   height: 1080px;
   overflow: hidden;
-  font-family: "Press Start 2P", sans-serif;
   color: #00b140;
   letter-spacing: 5px;
   font-weight: bold;
@@ -63,6 +66,7 @@ body {
     contrast(2) brightness(1);
   text-align: center;
   background: #141212;
+  font-family: "Retro";
 }
 
 main {
@@ -76,15 +80,20 @@ main {
 }
 
 .notif-area {
-  height: 300px;
+  height: 220px;
+  display: flex;
+  width: 840px;
+  margin-bottom: 40px;
 }
 
-.notif-upper,
-.notif-lower {
+.notif-left,
+.notif-right {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 50%;
+  border: red 1px solid;
+  width: 840px;
 }
 
 .start-button {
@@ -111,6 +120,7 @@ main {
 .grid-container {
   display: flex;
   gap: 40px;
+  margin-bottom: 18px;
 }
 
 .placement-grid {
@@ -194,6 +204,13 @@ main {
   background-color: rgba(255, 0, 0, 0.5);
 }
 
+h3 {
+  font-size: 0.7rem;
+  margin-bottom: 8px;
+  font-family: "Retro", serif;
+  font-weight: normal;
+  font-style: normal;
+}
 /*
 main {
   display: flex;
