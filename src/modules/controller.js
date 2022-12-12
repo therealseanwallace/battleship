@@ -79,6 +79,13 @@ class Controller {
     this.gameOver = false;
     this.shipPlacedCount = 0;
   }
+  
+  returnBoards() {
+    const cpuBoard = this.players.cpu.board;
+    const humanBoard = this.players.human.board;
+    console.log('cpuBoard is ', cpuBoard);
+    console.log('humanBoard is ', humanBoard);
+  }
 
   startGame() {
     if (coinFlip() === 1) {
@@ -200,7 +207,6 @@ class Controller {
 
   moveShip(details) {
     console.log("pubSub called moveShip! details are ", details);
-    console.log("this.players.human.board = ", this.players.human.board);
     console.log('moveShip = ', moveShip);
     console.log('this.players.human.board.getShip = ', this.players.human.board.getShip);
     this.players.human.board.moveShipInStorage(details[0], details[1], details[2], details[3]);
@@ -236,5 +242,7 @@ pubSub.sub("placedRight", iface.placedRight);
 pubSub.sub("placedWrong", iface.placedWrong);
 pubSub.sub("updateNots", iface.updateNots);
 console.log("subs are", pubSub.returnSubscribers("placeShip"));
+
+controller.returnBoards();
 
 export { pubSub };
