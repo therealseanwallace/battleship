@@ -159,7 +159,7 @@ main {
   opacity: 0.1;
   position: absolute;
   bottom: 100%;
-  animation: scanline 10s linear infinite;
+  animation: scanline 8s linear infinite;
 }
 
 @keyframes scanline {
