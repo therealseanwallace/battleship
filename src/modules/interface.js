@@ -70,15 +70,23 @@ export function shipsPlaced() {
 export function rotateShip(e) {
   console.log("rotateShip! e.target is", e.target);
   console.log("e.target.parentElement is", e.target.parentElement);
-  const ship = e.target;
-  console.log("rotateShip! ship is", ship);
-  if (checkPlacement(ship.dataset.length)) {
-    return;
-  }
   const xy = [
     e.target.parentElement.dataset.x,
     e.target.parentElement.dataset.y,
   ];
+  const ship = e.target;
+  console.log("rotateShip! ship is", ship);
+
+  // if the ship is placed off the board, add its new direction and length attributes
+  // to the array to be passed to the controller's rotateShip method
+  if (checkPlacement(ship.dataset.length)) {
+    let dir;
+    if (ship.dataset.direction === "0") {
+      dir = "1";
+    }
+    xy.push(dir, ship.dataset.length);
+  }
+
   pubSub.pub("rotateShip", xy);
 
   const parent = ship.parentNode;
@@ -256,11 +264,12 @@ export function invalidMove() {
 }
 
 export function gameOver(message) {
-  console.log('gameOver called!')
+  console.log("gameOver called!");
   document.querySelector(".notif-left").innerHTML =
     '<h2 class="notif instruction">Game Over!</h2>';
-  document.querySelector(".notif-right").innerHTML =
-  `<h2 class="notif instruction">${message}</h2>`;
+  document.querySelector(
+    ".notif-right"
+  ).innerHTML = `<h2 class="notif instruction">${message}</h2>`;
 }
 
 export function startGame() {
@@ -461,7 +470,9 @@ export function getTime() {
   const date = new Date();
   const hours = date.getHours();
   let minutes = date.getMinutes();
-  if (minutes === "0") { minutes = "00"; };
+  if (minutes === "0") {
+    minutes = "00";
+  }
   const seconds = date.getSeconds();
   return `${hours}:${minutes}:${seconds}`;
 }
@@ -490,7 +501,7 @@ class Interface {
   }
 
   addNotif(notif, player) {
-    console.log('addNotif! notif is', notif)
+    console.log("addNotif! notif is", notif);
     const notifWithTimestamp = `${getTime()}: ${notif}`;
     if (player === 1) {
       if (this.instructions.length > 1) {

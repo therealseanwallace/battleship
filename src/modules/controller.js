@@ -193,10 +193,11 @@ class Controller {
 
   placeHuman(ship) {
     console.log('placeHuman called! ship is ', ship);
+    console.log('this is ', this);
     const result = this.players.human.board.placeShipOnBoard(
       ship[0],
       ship[1],
-      ship[2],
+      Number(ship[2]),
       ship[3]
     );
     console.log('result is ', result);
@@ -209,6 +210,11 @@ class Controller {
 
   rotateShip(coords) {
     console.log("pubSub called rotateShip!", coords);
+    if (coords[2]) {
+      placeHumanShip(coords);
+      return;
+    }
+    
     this.players.human.board.rotateShipinStorage(Number(coords[0]), Number(coords[1]));
   }
 
