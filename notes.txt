@@ -7,12 +7,21 @@ to take in the interface, which will call the player objects from within
 the controller IIFE, avoiding exposing the player objects publicly
 
 
-ships from: <a href="https://www.freevector.com/spaceships-silhouettes-set#">FreeVector.com</a>
 
-bship dimensions: 236 * 36
 
-crusier dimensions: 156 * 36
+battleship vector from:
+https://freesvg.org/military-ship-vector-drawing
 
-destroyer: 116 * 36
 
-frigate: 76*36
+font
+
+retrogaming font:
+
+You must credit the author Copy this link on your web
+<div>Font made from <a href="http://www.onlinewebfonts.com">oNline Web Fonts</a>is licensed by CC BY 3.0</div>
+OR
+
+
+<a href="http://www.onlinewebfonts.com">oNline Web Fonts</a>
+
+

@@ -1,5 +1,4 @@
 export const componentFactory = (element) => {
-  console.log('componentFactory called with element = ', element);
   const {
     name,
     nodeType,

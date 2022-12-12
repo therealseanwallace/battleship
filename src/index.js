@@ -1,5 +1,7 @@
+import { controller } from "./modules/controller";
+import * as myInterface from "./modules/interface";
 import css from "./modules/styles.css";
-import { buildInterface, allowDrop } from "./modules/interface";
-import controller from "./modules/controller";
 
-buildInterface();
+console.log(myInterface.iface)
+console.log('conroller is', controller)
+myInterface.iface.buildInterface();

@@ -5,106 +5,168 @@ export const displayObjects = [
     parent: "body",
   },
   {
-    name: "contentContainer",
+    name: "bezel",
     nodeType: "div",
     parent: "main",
-    class1: "content",
+    class1: "bezel",
+  },
+  {
+    name: "gameContainer",
+    nodeType: "div",
+    parent: ".bezel",
+    class1: "game-container",
+  },
+  {
+    name: "scanline",
+    nodeType: "div",
+    parent: ".game-container",
+    class1: "scanline",
+  },
+  {
+    name: "titleContainer",
+    nodeType: "div",
+    parent: ".game-container",
+    class1: "title-container",
+  },
+  {
+    name: "notifArea",
+    nodeType: "div",
+    parent: ".game-container",
+    class1: "notif-area",
+  },
+  {
+    name: "notifUpper",
+    nodeType: "div",
+    parent: ".notif-area",
+    class1: "notif-left",
+  },
+  {
+    name: "notifLower",
+    nodeType: "div",
+    parent: ".notif-area",
+    class1: "notif-right",
   },
   {
     name: "mainTitle",
     nodeType: "h1",
-    parent: ".content",
+    parent: ".title-container",
     class1: "title",
     text: "BATTLESHIP",
   },
   {
-    name: "startGame",
-    nodeType: "input",
-    parent: ".content",
-    class1: "start-button",
-    inputType: "button",
-    value: "Click to start",
-  },
-]
-
-export const shipPlacement = [
-  {
-    name: "placementTitle",
-    nodeType: "h1",
-    parent: ".content",
-    class1: "placement-title",
-    text: "Place your ships",
-  },
-  {
     name: "placementContainer",
     nodeType: "div",
-    parent: ".content", 
+    parent: ".game-container",
     class1: "placement-container",
   },
   {
-    name: "placementGrid",
+    name: "shipPlacementContainer",
     nodeType: "div",
     parent: ".placement-container",
+    class1: "ship-placement-container",
+  },
+  {
+    name: "bShipContainer",
+    nodeType: "div",
+    parent: ".ship-placement-container",
+    class1: "bship-container",
+    class2: "ship-container",
+  },
+  {
+    name: "cruiserContainer",
+    nodeType: "div",
+    parent: ".ship-placement-container",
+    class1: "cruiser-container",
+    class2: "ship-container",
+  },
+  {
+    name: "destroyerContainer",
+    nodeType: "div",
+    parent: ".ship-placement-container",
+    class1: "destroyer-container",
+    class2: "ship-container",
+  },
+  {
+    name: "frigateContainer",
+    nodeType: "div",
+    parent: ".ship-placement-container",
+    class1: "frigate-container",
+    class2: "ship-container",
+  },
+  {
+    name: "gridContainer",
+    nodeType: "div",
+    parent: ".placement-container",
+    class1: "grid-container",
+  },
+  {
+    name: "humanGrid",
+    nodeType: "div",
+    parent: ".grid-container",
     class1: "placement-grid",
   },
   {
-    name: "shipsContainer",
+    name: "cpuBoard",
     nodeType: "div",
-    parent: ".placement-container",
-    class1: "ships-container",
+    parent: ".grid-container",
+    class1: "cpu-board",
   },
   {
-    name: "startGame",
+    name: "startButton",
     nodeType: "input",
-    parent: ".placement-container",
-    class1: "start-game",
+    parent: ".game-container",
+    class1: "start-button",
     inputType: "button",
-    value: "Start Game",
+    value: "START",
   },
   {
     name: "placementGridSquare",
     nodeType: "div",
     parent: ".placement-grid",
     class1: "placement-grid-square",
-  }
-]
+  },
+];
 
 export const ships = [
   {
     name: "Battleship",
     nodeType: "div",
-    parent: ".ships-container",
-    class1: "ship-placement",
-    class2: "battleship-placement",
+    parent: ".bship-container",
+    class1: "battleship-placement",
   },
   {
     name: "Cruiser",
     nodeType: "div",
-    parent: ".ships-container",
-    class1: "ship-placement",
-    class2: "cruiser-placement",
+    parent: ".cruiser-container",
+    class1: "cruiser-placement",
   },
   {
     name: "Destroyer",
     nodeType: "div",
-    parent: ".ships-container",
-    class1: "ship-placement",
-    class2: "destroyer-placement",
+    parent: ".destroyer-container",
+    class1: "destroyer-placement",
   },
   {
     name: "Frigate",
     nodeType: "div",
-    parent: ".ships-container",
-    class1: "ship-placement",
-    class2: "frigate-placement",
+    parent: ".frigate-container",
+    class1: "frigate-placement",
   },
-]
+];
 
-export const cpu = [
+export const notifs = [
   {
-    name: "cpuBoard",
-    nodeType: "div",
-    parent: ".placement-container",
-    class1: "cpu-board",
-  }
-]
+    name: "notifHuman",
+    nodeType: "h3",
+    parent: ".notif-left",
+    class1: "notif",
+    class2: "notif-human",
+  },
+  {
+    name: "notifCpu",
+    nodeType: "h3",
+    parent: ".notif-right",
+    class1: "notif",
+    class2: "notif-cpu",
+  },
+];

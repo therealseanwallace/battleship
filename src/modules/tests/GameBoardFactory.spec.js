@@ -1,21 +1,23 @@
-import { GameBoardFactory } from "@/modules/GameBoardFactory";
+import { playerBoard, cpuBoard } from "@/modules/GameBoardFactory";
 
-const gb = GameBoardFactory();
+const pb = playerBoard;
+const gb = cpuBoard;
 
 describe("Game Board", () => {
-  console.log('gb.gameBoard.board is', gb.gameBoard.board);
+  console.log('gb is', gb)
+  console.log('gb.board is', gb.board);
   test("Returns an object", () => {
     expect(gb).toBeTruthy();
     expect(typeof gb).toBe("object");
   });
-  test("gb.gameBoard.board Returns a 2d array", () => {
-    expect(gb.gameBoard.board[0][0]).toBeTruthy();
+  test("gb.board Returns a 2d array", () => {
+    expect(gb.board[0][0]).toBeTruthy();
   });
 });
 
 describe("Placing ships", () => {
   test("Placing Battleship horizontally at [0, 0] works", () => {
-    expect(gb.gameBoard.placeShipOnBoard(0, 0, 0, 6)).toStrictEqual([
+    expect(gb.placeShipOnBoard(0, 0, 0, 6)).toStrictEqual([
       [0, 0],
       [1, 0],
       [2, 0],
@@ -24,42 +26,51 @@ describe("Placing ships", () => {
       [5, 0],
     ]);
   });
-  test("Placing ship out of bounds horizontally returns error", () => {
-    expect(gb.gameBoard.placeShipOnBoard(7, 0, 0, 6)).toStrictEqual(
-      "Error! Can't place ship out of bounds!"
+  test("Placing ship out of bounds horizontally returns false", () => {
+    expect(gb.placeShipOnBoard(7, 0, 0, 6)).toStrictEqual(
+      false
     );
   });
   test("Placing ships vertically works", () => {
-    expect(gb.gameBoard.placeShipOnBoard(0, 5, 1, 4)).toStrictEqual([
+    expect(gb.placeShipOnBoard(0, 5, 1, 4)).toStrictEqual([
       [0, 5],
-      [0, 6],
-      [0, 7],
-      [0, 8],
+      [0, 4],
+      [0, 3],
+      [0, 2],
     ]);
   });
-  test("Placing ship out of bounds vertically returns error", () => {
-    expect(gb.gameBoard.placeShipOnBoard(0, 8, 1, 4)).toStrictEqual(
-      "Error! Can't place ship out of bounds!"
+  test("Placing ship out of bounds vertically returns false", () => {
+    expect(gb.placeShipOnBoard(0, 8, 1, 4)).toStrictEqual(
+      false
     );
   });
-  test("Placing a ship on top of another ship returns an error", () => {
-    expect(gb.gameBoard.placeShipOnBoard(0, 5, 1, 4)).toStrictEqual(
-      "Error! Can't place a ship on top of another ship!"
+  test("Placing a ship on top of another ship returns false", () => {
+    expect(gb.placeShipOnBoard(0, 5, 1, 4)).toStrictEqual(
+      false
     );
   });
+  test("Rotating a ship returns the expected output", () => { 
+    expect(gb.rotateShipinStorage(0, 5)).toStrictEqual([
+      [0, 5],
+      [0, 4],
+      [0, 3],
+      [0, 2],
+    ]);
+  }
+  )
 });
 
 describe("Attacking", () => {
   test("Hitting the test battleship returns correct result", () => {
-    expect(gb.gameBoard.receiveAttack(0, 0)).toStrictEqual([true, 5, false]);
+    expect(gb.receiveAttack([0, 0])).toStrictEqual("hit");
   });
   test("Hitting an empty square returns correct result", () => {
-    expect(gb.gameBoard.receiveAttack(6, 6)).toStrictEqual(true);
+    expect(gb.receiveAttack([6, 6])).toStrictEqual("miss");
   });
   test("Hitting an already-hit square returns correct result", () => {
-    expect(gb.gameBoard.receiveAttack(6, 6)).toStrictEqual(false);
+    expect(gb.receiveAttack([6, 6])).toStrictEqual(false);
   });
   test("Returns false if there are surviving ships", () => {
-    expect(gb.gameBoard.checkFleetSunk()).toStrictEqual(false);
+    expect(gb.checkFleetSunk()).toStrictEqual(false);
   });
 });

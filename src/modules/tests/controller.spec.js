@@ -1,32 +1,22 @@
-import { controller } from "@/modules/controller";
+import { controller } from "../controller";
 
-describe("Controller works correctly", () => {
-  // Should return a player object with the appropriate methods and
-  // attributes
-  test("Controller is present", () => {
-    expect(controller);
+describe("Controller", () => {
+  console.log("controller.players =", controller.players)
+  test("Current player returns a number", () => {
+    expect(typeof controller.currentPlayer).toStrictEqual('number');
   });
-  test("Placing a ship via the controller works", () => {
-    expect(controller.placeShip(0, 0, 0, 6, 1)).toStrictEqual([
-      [0, 0],
-      [1, 0],
-      [2, 0],
-      [3, 0],
-      [4, 0],
-      [5, 0],
-    ]);
+  test("Controller returns player objects", () => { 
+    expect(typeof controller.players.human).toStrictEqual('object');
+    expect(typeof controller.players.cpu).toStrictEqual('object');
   });
-  test("Placing a ship via the controller works", () => {
-    expect(controller.placeShip(0, 0, 0, 6, 1)).toStrictEqual([
-      [0, 0],
-      [1, 0],
-      [2, 0],
-      [3, 0],
-      [4, 0],
-      [5, 0],
-    ]);
+  test("pubSub methods are available via controller", () => { 
+    expect(typeof controller.pubSub.sub).toStrictEqual('function');
   });
-  test("Hitting the test battleship returns correct result", () => {
-    expect(controller.attack(0, 0, 1)).toStrictEqual([true, 5, false]);
+  test("Interface methods are available via controller", () => { 
+    expect(typeof controller.iface.buildShips).toStrictEqual('function');
+  });
+  controller.addTestShips();
+  test("addTestShips works", () => {
+    expect(controller.players.human.board.gameBoard.board[0][0].occupant).toStrictEqual(0);
   });
 });
