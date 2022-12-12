@@ -60,6 +60,24 @@ export const displayObjects = [
     class1: "placement-container",
   },
   {
+    name: "gridContainer",
+    nodeType: "div",
+    parent: ".placement-container",
+    class1: "grid-container",
+  },
+  {
+    name: "humanGrid",
+    nodeType: "div",
+    parent: ".grid-container",
+    class1: "placement-grid",
+  },
+  {
+    name: "cpuBoard",
+    nodeType: "div",
+    parent: ".grid-container",
+    class1: "cpu-board",
+  },
+  {
     name: "shipPlacementContainer",
     nodeType: "div",
     parent: ".placement-container",
@@ -92,24 +110,6 @@ export const displayObjects = [
     parent: ".ship-placement-container",
     class1: "frigate-container",
     class2: "ship-container",
-  },
-  {
-    name: "gridContainer",
-    nodeType: "div",
-    parent: ".placement-container",
-    class1: "grid-container",
-  },
-  {
-    name: "humanGrid",
-    nodeType: "div",
-    parent: ".grid-container",
-    class1: "placement-grid",
-  },
-  {
-    name: "cpuBoard",
-    nodeType: "div",
-    parent: ".grid-container",
-    class1: "cpu-board",
   },
   {
     name: "startButton",
