@@ -138,23 +138,29 @@ class Controller {
     console.log('playersMove! move is ', move);
     let resultArray = [];
     resultArray.push(move[0], move[1]);
+
     if (result === "hit") {
       resultArray.push(true, false);
+      pubSub.pub("markSquareHit", resultArray);
+      this.gameFlow(2);
     } else if (result === "miss") {
       resultArray.push(false, false);
+      pubSub.pub("markSquareHit", resultArray);
+      this.gameFlow(2);
     } else if (result === "sunk") {
       resultArray.push(true, false);
+      pubSub.pub("markSquareHit", resultArray);
+    this.gameFlow(2);
       // change the below to use pub/sub too
       pubSub.pub("sunk", true);
     } else if (result === "gameOver") {
+      pubSub.pub("markSquareHit", resultArray);
       this.gameOver = true;
       pubSub.pub("gameOver", "You win");
     } else if (result === "false") {
       pubSub.pub("invalid");
       this.gameFlow(1);
     }
-    pubSub.pub("markSquareHit", resultArray);
-    this.gameFlow(2);
   }
 
   getCPUMove() {
