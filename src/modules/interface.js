@@ -286,6 +286,11 @@ export function startGame() {
     element.removeEventListener("drop", drop);
     element.removeEventListener("dragover", allowDrop);
   }
+
+  // remove start button
+  document.querySelector(".start-button").remove();
+
+  // add the attack event listeners to the cpu board
   bindAddAttackListeners();
 }
 
