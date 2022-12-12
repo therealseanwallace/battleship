@@ -23,6 +23,8 @@ function placeShipOnBoard(x, y, horizVert, shipType, ID) {
   const newShip = ShipFactory.ShipFactory(shipType);
   newShip.direction = horizVert;
   const newShipLength = newShip.length;
+
+  // if this was an already existing ship, give it its old ID
   if (ID) { 
     newShip.shipID = ID;
   }
@@ -210,6 +212,10 @@ function rotateShipinStorage(x, y) {
     
     // check that the squares we will place the ship in are not occupied
     for (let i = 0; i < ship.length; i++) {
+      if (!this.board[(x + i)]) {
+        console.log('x+i is not valid');
+        return false;
+      }
       const xElement = this.board[x + i][y];
       if (xElement.occupant !== null) {
         console.log('xElement is ', xElement);
