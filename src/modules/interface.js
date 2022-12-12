@@ -208,10 +208,10 @@ export function updateNotsDisplay() {
 
   // assemble the html for the notifications
   for (let i = 0; i < instructions.length; i++) {
-    leftResult += `<h3 class="notif instruction">${instructions[i]}></h3>`;
+    leftResult += `<h3 class="notif instruction">${instructions[i]}</h3>`;
   }
   for (let i = 0; i < gameNots.length; i++) {
-    rightResult += `<h3 class="notif cpu-notif">${gameNots[i]}></h3>`;
+    rightResult += `<h3 class="notif cpu-notif">${gameNots[i]}</h3>`;
   }
 
   // write the html to the notification displays
@@ -457,6 +457,15 @@ export function placedWrong(ship) {
   console.log("placedWrong! isBadlyPlaced is: ", isBadlyPlaced);
 }
 
+export function getTime() {
+  const date = new Date();
+  const hours = date.getHours();
+  let minutes = date.getMinutes();
+  if (minutes === "0") { minutes = "00"; };
+  const seconds = date.getSeconds();
+  return `${hours}:${minutes}:${seconds}`;
+}
+
 class Interface {
   constructor() {
     this.componentFactory = componentFactory;
@@ -481,16 +490,18 @@ class Interface {
   }
 
   addNotif(notif, player) {
+    console.log('addNotif! notif is', notif)
+    const notifWithTimestamp = `${getTime()}: ${notif}`;
     if (player === 1) {
-      if (this.instructions.length > 2) {
+      if (this.instructions.length > 1) {
         this.instructions.shift();
       }
-      this.instructions.push(notif);
+      this.instructions.push(notifWithTimestamp);
     } else {
-      if (this.gameNots.length > 2) {
+      if (this.gameNots.length > 1) {
         this.gameNots.shift();
       }
-      this.gameNots.push(notif);
+      this.gameNots.push(notifWithTimestamp);
     }
     this.updateNotsDisplay();
   }
