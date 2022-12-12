@@ -154,6 +154,7 @@ class Controller {
       // change the below to use pub/sub too
       pubSub.pub("sunk", true);
     } else if (result === "gameOver") {
+      resultArray.push(true, false);
       pubSub.pub("markSquareHit", resultArray);
       this.gameOver = true;
       pubSub.pub("gameOver", "You win");
