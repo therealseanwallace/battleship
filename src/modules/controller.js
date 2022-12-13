@@ -19,7 +19,7 @@ class PubSub {
     }
     this[topic].subscribers.push(subscriber);
     console.log("subbed! this[topic] = ", this[topic]);
-    console.log('subbed! this is ', this)
+    console.log("subbed! this is ", this);
   }
 
   unsub(topic, subscriber) {
@@ -35,7 +35,7 @@ class PubSub {
 
   pub(topic, payload) {
     console.log("pub called! topic, payload are ", topic, payload);
-    console.log('this is ', this) 
+    console.log("this is ", this);
     this[topic].subscribers.forEach((sub) => sub(payload));
   }
 
@@ -46,17 +46,6 @@ class PubSub {
     return result;
   }
 }
-
-export const notServ = (...args) => {
-  console.log("notification server! args[0][0] is ", args[0][0]);
-  if (args[0] === "shipsPlaced") {
-    console.log("shipsPlaced notification received!");
-  }
-
-  if (args[0][0] === "shipDropped") {
-    console.log("shipDropped notification received!");
-  }
-};
 
 /*controller.pubSub.pub("placeShip", [Number(e.target.dataset.x),
   Number(e.target.dataset.y),
@@ -79,12 +68,12 @@ class Controller {
     this.gameOver = false;
     this.shipPlacedCount = 0;
   }
-  
+
   returnBoards() {
     const cpuBoard = this.players.cpu.board;
     const humanBoard = this.players.human.board;
-    console.log('cpuBoard is ', cpuBoard);
-    console.log('humanBoard is ', humanBoard);
+    console.log("cpuBoard is ", cpuBoard);
+    console.log("humanBoard is ", humanBoard);
   }
 
   startGame() {
@@ -120,12 +109,22 @@ class Controller {
     this.players.cpu.board.gameBoard.placeShipOnBoard(0, 3, 0, 2);
   }
 
+  decrementPlacedCount() {
+    console.log(
+      "decrementPlacedCount called! this.shipPlacedCount is ",
+      this.shipPlacedCount
+    );
+    this.shipPlacedCount -= 1;
+    console.log(
+      "decrementPlacedCount done! this.shipPlacedCount is ",
+      this.shipPlacedCount
+    );
+  }
+
   shipPlaced(result) {
     this.shipPlacedCount += 1;
-    console.log('********shipPlaced! result is', result);
-    const type = result.length;
-    pubSub.pub("placedRight", type);
-    console.log('type is ', type);
+    console.log("********shipPlaced! result is", result);
+    console.log("this.shipPlacedCount is ", this.shipPlacedCount);
 
     if (this.shipPlacedCount === 4) {
       this.shipsPlaced = true;
@@ -135,7 +134,7 @@ class Controller {
 
   playersMove(move) {
     const result = this.players.cpu.board.receiveAttack(move);
-    console.log('playersMove! move is ', move);
+    console.log("playersMove! move is ", move);
     let resultArray = [];
     resultArray.push(move[0], move[1]);
 
@@ -150,7 +149,7 @@ class Controller {
     } else if (result === "sunk") {
       resultArray.push(true, false);
       pubSub.pub("markSquareHit", resultArray);
-    this.gameFlow(2);
+      this.gameFlow(2);
       // change the below to use pub/sub too
       pubSub.pub("sunk", true);
     } else if (result === "gameOver") {
@@ -166,9 +165,9 @@ class Controller {
 
   getCPUMove() {
     const move = this.players.cpu.attack();
-    console.log('getCPUMove! move is ', move);
+    console.log("getCPUMove! move is ", move);
     const result = this.players.human.board.receiveAttack(move);
-    console.log('getCPUMove! result is ', result)
+    console.log("getCPUMove! result is ", result);
     let resultArray = [];
     resultArray.push(move[0], move[1]);
     if (result === "hit") {
@@ -184,48 +183,58 @@ class Controller {
     } else if (result === "false") {
       getCPUMove();
     }
-    console.log('passed the if/else');
-    if (result !== false) { 
+    console.log("passed the if/else");
+    if (result !== false) {
       pubSub.pub("markSquareHit", resultArray);
       this.gameFlow(1);
     }
   }
 
   placeHuman(ship) {
-    console.log('placeHuman called! ship is ', ship);
-    console.log('this is ', this);
+    console.log("placeHuman called! ship is ", ship);
+    console.log('placing ship! this.shipPlacedCount is ', this.shipPlacedCount);
+    console.log("this is ", this);
     const result = this.players.human.board.placeShipOnBoard(
       ship[0],
       ship[1],
       Number(ship[2]),
       ship[3]
     );
-    console.log('result is ', result);
+    console.log("result is ", result);
     if (result !== false) {
       placedShip(result);
-      return;
-    }
-    pubSub.pub("placedWrong", ship[3]);
-  }
+      console.log('placed ship! this.shipPlacedCount is ', this.shipPlacedCount);
 
-  rotateShip(coords) {
-    console.log("pubSub called rotateShip!", coords);
-    if (coords[2]) {
-      placeHumanShip(coords);
       return;
     }
     
-    this.players.human.board.rotateShipinStorage(Number(coords[0]), Number(coords[1]));
+  }
+
+  rotateShip(shipData) {
+    console.log("pubSub called rotateShip!", shipData);
+    const result = this.players.human.board.rotateShipinStorage(shipData);
+    console.log("controller.rotateShip result is ", result);
+    console.log('rotating ship! this.shipPlacedCount is ', this.shipPlacedCount);
+    if (result !== false) { 
+      this.shipPlaced(result);
+      console.log('rotating ship! this.shipPlacedCount is ', this.shipPlacedCount);
+    }
   }
 
   moveShip(details) {
     console.log("pubSub called moveShip! details are ", details);
-    console.log('moveShip = ', moveShip);
-    console.log('this.players.human.board.getShip = ', this.players.human.board.getShip);
-    this.players.human.board.moveShipInStorage(details[0], details[1], details[2], details[3]);
+    console.log("moveShip = ", moveShip);
+    console.log(
+      "this.players.human.board.getShip = ",
+      this.players.human.board.getShip
+    );
+    this.players.human.board.moveShipInStorage(
+      details[0],
+      details[1],
+      details[2],
+      details[3]
+    );
   }
-
-
 }
 
 const controller = new Controller();
@@ -251,11 +260,15 @@ pubSub.sub("markSquareHit", markSquare);
 pubSub.sub("sunk", iface.sunk);
 pubSub.sub("gameOver", iface.gameOver);
 pubSub.sub("invalid", iface.invalidMove);
-pubSub.sub("placedRight", iface.placedRight);
-pubSub.sub("placedWrong", iface.placedWrong);
 pubSub.sub("updateNots", iface.updateNots);
+
 console.log("subs are", pubSub.returnSubscribers("placeShip"));
 
 controller.returnBoards();
+
+pubSub.sub(
+  "decrementPlacedCount",
+  controller.decrementPlacedCount.bind(controller)
+);
 
 export { pubSub };

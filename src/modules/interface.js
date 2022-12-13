@@ -73,19 +73,11 @@ export function rotateShip(e) {
   const xy = [
     e.target.parentElement.dataset.x,
     e.target.parentElement.dataset.y,
+    e.target.dataset.direction,
+    e.target.dataset.length,
   ];
   const ship = e.target;
-  console.log("rotateShip! ship is", ship);
-
-  // if the ship is placed off the board, add its new direction and length attributes
-  // to the array to be passed to the controller's rotateShip method
-  if (checkPlacement(ship.dataset.length)) {
-    let dir;
-    if (ship.dataset.direction === "0") {
-      dir = "1";
-    }
-    xy.push(dir, ship.dataset.length);
-  }
+  console.log("rotateShip! ship is", ship, 'xy is', xy);
 
   pubSub.pub("rotateShip", xy);
 
@@ -305,13 +297,6 @@ export function startGame() {
 
 let dragStorage = "test";
 
-let isBadlyPlaced = {
-  6: true,
-  4: true,
-  3: true,
-  2: true,
-};
-
 export function getPlayerMove() {
   // provide the player with some sort of prompt. for now, console
   addNotif("Your move! Please attack an enemy square by clicking.", 1);
@@ -424,48 +409,6 @@ export function drag(e) {
   console.log("dragStorage is", dragStorage);
 }
 
-function checkPlacement(ship) {
-  return isBadlyPlaced[ship];
-}
-
-export function placedRight(ship) {
-  console.log("placedRight called! isBadlyPlaced is: ", isBadlyPlaced);
-  switch (ship) {
-    case 6:
-      isBadlyPlaced[6] = false;
-      break;
-    case 4:
-      isBadlyPlaced[4] = false;
-      break;
-    case 3:
-      isBadlyPlaced[3] = false;
-      break;
-    default:
-      isBadlyPlaced[2] = false;
-      break;
-  }
-  console.log("placedRight called! isBadlyPlaced is: ", isBadlyPlaced);
-}
-
-export function placedWrong(ship) {
-  console.log("placedWrong called! isBadlyPlaced is: ", isBadlyPlaced);
-  switch (ship) {
-    case 6:
-      isBadlyPlaced[6] = true;
-      break;
-    case 4:
-      isBadlyPlaced[4] = true;
-      break;
-    case 3:
-      isBadlyPlaced[3] = true;
-      break;
-    default:
-      isBadlyPlaced[2] = true;
-      break;
-  }
-  console.log("placedWrong! isBadlyPlaced is: ", isBadlyPlaced);
-}
-
 export function getTime() {
   const date = new Date();
   const hours = date.getHours();
@@ -493,7 +436,6 @@ class Interface {
     this.addDragListeners = addDragListeners;
     this.allowDrop = allowDrop;
     this.buildInterface = buildInterface;
-    this.placedRight = placedRight;
     this.instructions = [];
     this.gameNots = [];
     this.updateNotsDisplay = updateNotsDisplay;
