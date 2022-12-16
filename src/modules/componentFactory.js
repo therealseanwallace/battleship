@@ -43,7 +43,6 @@ export const componentFactory = (element) => {
       newDOMNode.textContent = text;
     }
     if (id) {
-      console.log('element has id! id = ', id);
       newDOMNode.id = id;
     }
 
@@ -72,4 +71,3 @@ export const componentFactory = (element) => {
     taskID,
   };
 };
-

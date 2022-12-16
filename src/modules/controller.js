@@ -10,7 +10,6 @@ class Topic {
 
 class PubSub {
   sub(topic, subscriber) {
-    console.log("sub! topic is", topic);
     if (typeof subscriber !== "function") {
       return `${typeof subscriber} is not a valid argument for subscribers`;
     }
@@ -18,8 +17,6 @@ class PubSub {
       this[topic] = new Topic();
     }
     this[topic].subscribers.push(subscriber);
-    console.log("subbed! this[topic] = ", this[topic]);
-    console.log("subbed! this is ", this);
   }
 
   unsub(topic, subscriber) {
@@ -34,13 +31,10 @@ class PubSub {
   }
 
   pub(topic, payload) {
-    console.log("pub called! topic, payload are ", topic, payload);
-    console.log("this is ", this);
     this[topic].subscribers.forEach((sub) => sub(payload));
   }
 
   returnSubscribers(topic) {
-    console.log("returnSubscribers called! topic is ", topic, "this is ", this);
     const result = [];
     this[topic].subscribers.forEach((sub) => result.push(sub));
     return result;
@@ -76,8 +70,6 @@ class Controller {
   returnBoards() {
     const cpuBoard = this.players.cpu.board;
     const humanBoard = this.players.human.board;
-    console.log("cpuBoard is ", cpuBoard);
-    console.log("humanBoard is ", humanBoard);
   }
 
   startGame() {
@@ -90,7 +82,6 @@ class Controller {
 
   gameFlow(whoseTurn) {
     if (this.gameOver === true) {
-      console.log("game is over!");
       return;
     }
     if (whoseTurn === 1) {
@@ -114,21 +105,11 @@ class Controller {
   }
 
   decrementPlacedCount() {
-    console.log(
-      "decrementPlacedCount called! this.shipPlacedCount is ",
-      this.shipPlacedCount
-    );
     this.shipPlacedCount -= 1;
-    console.log(
-      "decrementPlacedCount done! this.shipPlacedCount is ",
-      this.shipPlacedCount
-    );
   }
 
   shipPlaced(result) {
     this.shipPlacedCount += 1;
-    console.log("********shipPlaced! result is", result);
-    console.log("this.shipPlacedCount is ", this.shipPlacedCount);
 
     if (this.shipPlacedCount === 4) {
       this.shipsPlaced = true;
@@ -138,7 +119,7 @@ class Controller {
 
   playersMove(move) {
     const result = this.players.cpu.board.receiveAttack(move);
-    console.log("playersMove! move is ", move);
+
     let resultArray = [];
     resultArray.push(move[0], move[1]);
 
@@ -178,24 +159,20 @@ class Controller {
       [x, y + 1],
     ];
     let validSquares = [];
-    console.log("this.players.human.board is ", board);
-    console.log(
-      "this.players.human.board.checkifSquareExists is ",
-      board.checkIfSquareExists
-    );
+
     adjacentSquares.forEach((square) => {
       if (board.checkIfSquareExists(square[0], square[1])) {
         validSquares.push(square);
       }
     });
-    console.log("validSquares are ", validSquares);
+
     let validAttacks = [];
     validSquares.forEach((square) => {
       if (!board.checkIfSquareIsHit(square[0], square[1])) {
         validAttacks.push(square);
       }
     });
-    console.log("validAttacks are ", validAttacks);
+
     if (validAttacks.length === 0) {
       this.cpuHit = false;
     }
@@ -203,10 +180,10 @@ class Controller {
     // get a random square from validAttacks
     const randomIndex = Math.floor(Math.random() * validAttacks.length);
     const randomSquare = validAttacks[randomIndex];
-    console.log("randomSquare is ", randomSquare);
+
     return randomSquare;
   }
-  
+
   getProbableShipDirection() {
     let dir;
     const x1 = this.cpuHit[0];
@@ -214,73 +191,76 @@ class Controller {
     const x2 = this.secondCpuHit[0];
     const y2 = this.secondCpuHit[1];
     if (x1 === x2) {
-      if (y2 > y1) { 
+      if (y2 > y1) {
         dir = 0;
-      }
-      else {
+      } else {
         dir = 2;
       }
-    }
-    else {
+    } else {
       if (x2 > x1) {
         dir = 1;
-      }
-      else {
+      } else {
         dir = 3;
       }
     }
 
-
-    console.log('getProbableShipDirection! dir is ', dir);
     return dir;
   }
 
-  getAdjacentSquareByDirection(x, y, dir) { 
-    console.log('getAdjacentSquareByDirection! x, y, dir are ', x, y, dir);
-    switch (dir) { 
+  getAdjacentSquareByDirection(x, y, dir) {
+    switch (dir) {
       case 0:
-        console.log('getAdjacentSquareByDirection! square is ', [x, y + 1]);
         return [x, y + 1];
       case 1:
-        console.log('getAdjacentSquareByDirection! square is ', [x + 1, y]);
         return [x + 1, y];
       case 2:
-        console.log('getAdjacentSquareByDirection! square is ', [x, y - 1]);
         return [x, y - 1];
       default:
-        console.log('getAdjacentSquareByDirection! square is ', [x - 1, y]);
         return [x - 1, y];
     }
   }
 
   getCPUMove() {
     let move = this.players.cpu.attack();
-    console.log('getCPUMove! move is ', move);
 
-    if (this.secondCpuHit && !this.probableShipDirection) { 
-      console.log('this.secondCpuHit is ', this.secondCpuHit);
-      if (!this.probableShipDirection) { 
+    if (this.secondCpuHit && !this.probableShipDirection) {
+      if (!this.probableShipDirection) {
         this.probableShipDirection = this.getProbableShipDirection();
-        console.log('this.probableShipDirection is ', this.probableShipDirection);
       }
     }
-    
-    if (this.probableShipDirection) { 
+
+    if (this.probableShipDirection) {
       switch (this.probableShipDirection) {
         case 0:
-          move = this.getAdjacentSquareByDirection(this.lastHit[0], this.lastHit[1], 0);
+          move = this.getAdjacentSquareByDirection(
+            this.lastHit[0],
+            this.lastHit[1],
+            0
+          );
           break;
-        
+
         case 1:
-          move = this.getAdjacentSquareByDirection(this.lastHit[0], this.lastHit[1], 1);
+          move = this.getAdjacentSquareByDirection(
+            this.lastHit[0],
+            this.lastHit[1],
+            1
+          );
           break;
 
         case 2:
-          move = this.getAdjacentSquareByDirection(this.lastHit[0], this.lastHit[1], 2);
+          move = this.getAdjacentSquareByDirection(
+            this.lastHit[0],
+            this.lastHit[1],
+            2
+          );
           break;
 
         default:
-          move = this.getAdjacentSquareByDirection(this.lastHit[0], this.lastHit[1], 3);
+          move = this.getAdjacentSquareByDirection(
+            this.lastHit[0],
+            this.lastHit[1],
+            3
+          );
           break;
       }
     }
@@ -289,31 +269,28 @@ class Controller {
       move = this.getRandomAdjacentSquare(this.cpuHit);
     }
 
-    console.log("getCPUMove! move is ", move);
     let result = this.players.human.board.receiveAttack(move);
     while (result === false) {
-      console.log('result is false! trying again');
       const newAttack = this.players.cpu.attack();
-      console.log('newAttack is ', newAttack);
+
       move = newAttack;
       result = this.players.human.board.receiveAttack(newAttack);
-      console.log('still inside while loop. result is ', result);
     }
-    console.log("getCPUMove! result is ", result);
+
     let resultArray = [];
     resultArray.push(move[0], move[1]);
     if (result === "hit") {
       resultArray.push(true, true);
-      if (this.cpuHit && !this.secondCpuHit) { 
+      if (this.cpuHit && !this.secondCpuHit) {
         this.secondCpuHit = [move[0], move[1]];
-      } else { this.cpuHit = [move[0], move[1]]; }
+      } else {
+        this.cpuHit = [move[0], move[1]];
+      }
       this.lastHit = [move[0], move[1]];
-      console.log("this.cpuHit is ", this.cpuHit);
-      console.log("this.secondCpuHit is ", this.secondCpuHit);
     } else if (result === "miss") {
       resultArray.push(false, true);
-      if (this.probableShipDirection) { 
-        switch (this.probableShipDirection) { 
+      if (this.probableShipDirection) {
+        switch (this.probableShipDirection) {
           case 0:
             this.probableShipDirection = 2;
             break;
@@ -340,7 +317,7 @@ class Controller {
       pubSub.pub("gameOver", "The computer wins!");
       this.gameOver = true;
     }
-    console.log("passed the if/else");
+
     if (result !== false) {
       pubSub.pub("markSquareHit", resultArray);
       this.gameFlow(1);
@@ -348,51 +325,28 @@ class Controller {
   }
 
   placeHuman(ship) {
-    console.log("placeHuman called! ship is ", ship);
-    console.log("placing ship! this.shipPlacedCount is ", this.shipPlacedCount);
-    console.log("this is ", this);
     const result = this.players.human.board.placeShipOnBoard(
       ship[0],
       ship[1],
       Number(ship[2]),
       ship[3]
     );
-    console.log("result is ", result);
+
     if (result !== false) {
       placedShip(result);
-      console.log(
-        "placed ship! this.shipPlacedCount is ",
-        this.shipPlacedCount
-      );
-
       return;
     }
   }
 
   rotateShip(shipData) {
-    console.log("pubSub called rotateShip!", shipData);
     const result = this.players.human.board.rotateShipinStorage(shipData);
-    console.log("controller.rotateShip result is ", result);
-    console.log(
-      "rotating ship! this.shipPlacedCount is ",
-      this.shipPlacedCount
-    );
+
     if (result !== false) {
       this.shipPlaced(result);
-      console.log(
-        "rotating ship! this.shipPlacedCount is ",
-        this.shipPlacedCount
-      );
     }
   }
 
   moveShip(details) {
-    console.log("pubSub called moveShip! details are ", details);
-    console.log("moveShip = ", moveShip);
-    console.log(
-      "this.players.human.board.getShip = ",
-      this.players.human.board.getShip
-    );
     this.players.human.board.moveShipInStorage(
       details[0],
       details[1],
@@ -426,8 +380,6 @@ pubSub.sub("sunk", iface.sunk);
 pubSub.sub("gameOver", iface.gameOver);
 pubSub.sub("invalid", iface.invalidMove);
 pubSub.sub("updateNots", iface.updateNots);
-
-console.log("subs are", pubSub.returnSubscribers("placeShip"));
 
 controller.returnBoards();
 

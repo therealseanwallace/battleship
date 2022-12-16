@@ -68,8 +68,6 @@ export function shipsPlaced() {
 }
 
 export function rotateShip(e) {
-  console.log("rotateShip! e.target is", e.target);
-  console.log("e.target.parentElement is", e.target.parentElement);
   const xy = [
     e.target.parentElement.dataset.x,
     e.target.parentElement.dataset.y,
@@ -77,7 +75,6 @@ export function rotateShip(e) {
     e.target.dataset.length,
   ];
   const ship = e.target;
-  console.log("rotateShip! ship is", ship, 'xy is', xy);
 
   pubSub.pub("rotateShip", xy);
 
@@ -152,11 +149,9 @@ export function removeAttackListeners() {
 }
 
 function attack(e) {
-  console.log("e.target is", e.target);
   const x = Number(e.target.dataset.x);
   const y = Number(e.target.dataset.y);
-  console.log("x is", x);
-  console.log("y is", y);
+
   pubSub.pub("playersMove", [x, y]);
   removeAttackListeners();
   setTimeout(addAttackListeners, 100);
@@ -174,7 +169,6 @@ function attack(e) {
 }*/
 
 export function addAttackListeners() {
-  console.log("addAttackListeners!)");
   const gridSquares = document.querySelectorAll(".cpu-grid-square");
   gridSquares.forEach((square) => {
     square.addEventListener("click", attack);
@@ -182,7 +176,6 @@ export function addAttackListeners() {
 }
 
 export function sunk(isPlayerBoard) {
-  console.log("sunk called! isPlayerBoard is", isPlayerBoard);
   if (!isPlayerBoard) {
     addNotif("The computer sunk your ship!", 2);
   } else {
@@ -220,7 +213,6 @@ export function updateNotsDisplay() {
 }
 
 export function markSquareHit(array) {
-  console.log("markSquareHit! array is", array);
   let square;
   const x = array[0];
   const y = array[1];
@@ -229,7 +221,7 @@ export function markSquareHit(array) {
 
   if (isPlayerBoard) {
     square = document.querySelector(`.player-grid-square-${x}-${y}`);
-    console.log("player square is", square);
+
     if (isOccupied) {
       square.classList.add("hit-occupied");
       addNotif("The computer hit your ship!", 2);
@@ -239,7 +231,7 @@ export function markSquareHit(array) {
     }
   } else {
     square = document.querySelector(`.cpu-grid-square-${x}-${y}`);
-    console.log("cpu square is", square);
+
     if (isOccupied) {
       square.classList.add("hit-occupied");
       addNotif("You hit an enemy ship!", 2);
@@ -256,7 +248,6 @@ export function invalidMove() {
 }
 
 export function gameOver(message) {
-  console.log("gameOver called!");
   document.querySelector(".notif-left").innerHTML =
     '<h2 class="notif instruction">Game Over!</h2>';
   document.querySelector(
@@ -281,7 +272,7 @@ export function startGame() {
 
   // remove drop event listeners
   const squares = document.querySelectorAll(".placement-grid-square");
-  console.log("squares = ", squares);
+
   for (let i = 0; i < squares.length; i++) {
     const element = squares[i];
     element.removeEventListener("drop", drop);
@@ -305,15 +296,9 @@ export function getPlayerMove() {
 export function drop(e) {
   e.preventDefault();
   const data = e.dataTransfer.getData("img");
-  console.log("data is", data);
+
   e.target.appendChild(document.getElementById(data));
-  console.log(
-    "drop! about to place ship. args are ",
-    e.target.dataset.x,
-    e.target.dataset.y,
-    0
-  );
-  console.log("pubSub.pub is", pubSub.pub);
+
   pubSub.pub("placeShip", [
     Number(e.target.dataset.x),
     Number(e.target.dataset.y),
@@ -321,23 +306,21 @@ export function drop(e) {
     Number(dragStorage.dataset.length),
   ]);
 
-  console.log("dragStorage.id is", dragStorage.id);
   document
     .querySelector(`#${dragStorage.id}`)
     .addEventListener("click", rotateShip);
 }
 
 export function addDragListeners() {
-  console.log("addDragListeners!");
   const draggables = document.querySelectorAll(".draggable");
-  console.log("draggables = ", draggables);
+
   for (let i = 0; i < draggables.length; i++) {
     const element = draggables[i];
-    console.log("element is: ", element);
+
     element.addEventListener("dragstart", drag);
   }
   const squares = document.querySelectorAll(".placement-grid-square");
-  console.log("squares = ", squares);
+
   for (let i = 0; i < squares.length; i++) {
     const element = squares[i];
     element.addEventListener("drop", drop);
@@ -383,18 +366,8 @@ export function buildInterface() {
 
 export function drag(e) {
   dragStorage = e.target;
-  console.log("drag! e.target = ", e.target);
-  console.log("drag! e.target.parentElement = ", e.target.parentElement);
+
   if (e.target.parentElement.classList.contains("placement-grid-square")) {
-    console.log("this is a square!");
-    console.log(
-      "e.target.parentElement.dataset.x = ",
-      e.target.parentElement.dataset.x
-    );
-    console.log(
-      "e.target.parentElement.dataset.y = ",
-      e.target.parentElement.dataset.y
-    );
     const x = Number(e.target.parentElement.dataset.x);
     const y = Number(e.target.parentElement.dataset.y);
     const result = [
@@ -406,7 +379,6 @@ export function drag(e) {
     pubSub.pub("moveShip", result);
   }
   e.dataTransfer.setData("img", e.target.id);
-  console.log("dragStorage is", dragStorage);
 }
 
 export function getTime() {
@@ -443,7 +415,6 @@ class Interface {
   }
 
   addNotif(notif, player) {
-    console.log("addNotif! notif is", notif);
     const notifWithTimestamp = `${getTime()}: ${notif}`;
     if (player === 1) {
       if (this.instructions.length > 1) {

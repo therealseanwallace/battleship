@@ -29,7 +29,7 @@ export default class PubSub {
   }
 
   pub(topic, payload) {
-    console.log('pub!')
+    
     this[topic].subscribers.forEach((sub) => sub(payload));
   }
 

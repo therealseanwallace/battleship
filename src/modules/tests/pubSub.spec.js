@@ -1,4 +1,4 @@
-import PubSub from "../modules/PubSub";
+import PubSub from "../PubSub";
 
 describe("ShipFactory", () => {
   const testSub = {

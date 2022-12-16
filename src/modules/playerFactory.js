@@ -5,7 +5,9 @@ export const playerFactory = () => {
     let board;
     if (type === 1) {
       board = playerBoard;
-    } else { board = cpuBoard; }
+    } else {
+      board = cpuBoard;
+    }
     const playerType = type;
 
     board.playerType = playerType;
@@ -17,7 +19,7 @@ export const playerFactory = () => {
 
   const placeCPUShips = () => {
     const shipTypes = [6, 4, 3, 2];
-    console.log('cpu.board is', cpu.board);
+
     const placeShip = (type) => {
       const x = Math.floor(Math.random() * 9);
       const y = Math.floor(Math.random() * 9);
@@ -26,16 +28,13 @@ export const playerFactory = () => {
       if (result === false) {
         placeShip(type);
       }
-      
-    }
+    };
 
-    shipTypes.forEach(shipType => {
+    shipTypes.forEach((shipType) => {
       placeShip(shipType);
     });
-
-    console.log('cpu.board.shipArray = ', cpu.board.shipArray);
   };
-  
+
   placeCPUShips();
 
   const cpuAttack = () => {
