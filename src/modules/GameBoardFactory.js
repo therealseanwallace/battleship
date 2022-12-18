@@ -21,11 +21,14 @@ const buildBoard = () => {
 };
 
 function checkIfSquareIsHit(x, y) {
-  return this.board[x][y].hit;
+    return this.board[x][y].hit;
 }
 
 function checkIfSquareExists(x, y) {
-  return this.board[x][y];
+  if (x < 0 || x > 9 || y < 0 || y > 9) { 
+    return false;
+  }
+  return true;
 }
 
 function placeShipOnBoard(x, y, horizVert, shipType, ID) {
