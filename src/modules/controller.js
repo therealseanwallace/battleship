@@ -270,6 +270,7 @@ class Controller {
     }
 
     let result = this.players.human.board.receiveAttack(move);
+
     while (result === false) {
       const newAttack = this.players.cpu.attack();
 
@@ -283,8 +284,6 @@ class Controller {
       resultArray.push(true, true);
       if (this.cpuHit && !this.secondCpuHit) {
         this.secondCpuHit = [move[0], move[1]];
-      } else {
-        this.cpuHit = [move[0], move[1]];
       }
       this.lastHit = [move[0], move[1]];
     } else if (result === "miss") {
