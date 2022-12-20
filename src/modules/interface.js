@@ -141,20 +141,10 @@ export function cpuAttack() {
   }
 }
 
-export function removeAttackListeners() {
-  const squares = document.querySelectorAll(".cpu-grid-square");
-  squares.forEach((square) => {
-    square.removeEventListener("click", attack);
-  });
-}
-
 function attack(e) {
   const x = Number(e.target.dataset.x);
   const y = Number(e.target.dataset.y);
-
   pubSub.pub("playersMove", [x, y]);
-  removeAttackListeners();
-  setTimeout(addAttackListeners, 100);
 }
 
 /*export function miss(move, player) {
@@ -168,11 +158,23 @@ function attack(e) {
   }
 }*/
 
+const abortController = new AbortController();
+const { signal } = abortController;
+
 export function addAttackListeners() {
   const gridSquares = document.querySelectorAll(".cpu-grid-square");
   gridSquares.forEach((square) => {
-    square.addEventListener("click", attack);
+    square.addEventListener("click", attack, { signal, once: true });
   });
+}
+
+export function removeAttackListeners() {
+  abortController.abort();
+  /*const squares = document.querySelectorAll(".cpu-grid-square");
+  for (let i = 0; i < squares.length; i++) {
+    const element = squares[i];
+    element.removeEventListener("click", attack);
+  }*/
 }
 
 export function sunk(isPlayerBoard) {
@@ -219,25 +221,27 @@ export function markSquareHit(array) {
   const isOccupied = array[2];
   const isPlayerBoard = array[3];
 
-  if (isPlayerBoard) {
-    square = document.querySelector(`.player-grid-square-${x}-${y}`);
+  if (!array[4]) {
+    if (isPlayerBoard) {
+      square = document.querySelector(`.player-grid-square-${x}-${y}`);
 
-    if (isOccupied) {
-      square.classList.add("hit-occupied");
-      addNotif("The computer hit your ship!", 2);
+      if (isOccupied) {
+        square.classList.add("hit-occupied");
+        addNotif("The computer hit your ship!", 2);
+      } else {
+        square.classList.add("hit-empty");
+        addNotif("The computer hit an empty square!", 2);
+      }
     } else {
-      square.classList.add("hit-empty");
-      addNotif("The computer hit an empty square!", 2);
-    }
-  } else {
-    square = document.querySelector(`.cpu-grid-square-${x}-${y}`);
+      square = document.querySelector(`.cpu-grid-square-${x}-${y}`);
 
-    if (isOccupied) {
-      square.classList.add("hit-occupied");
-      addNotif("You hit an enemy ship!", 2);
-    } else {
-      square.classList.add("hit-empty");
-      addNotif("You hit an empty square!", 2);
+      if (isOccupied) {
+        square.classList.add("hit-occupied");
+        addNotif("You hit an enemy ship!", 2);
+      } else {
+        square.classList.add("hit-empty");
+        addNotif("You hit an empty square!", 2);
+      }
     }
   }
 }
@@ -248,8 +252,9 @@ export function invalidMove() {
 }
 
 export function gameOver(message) {
+  bindRemoveAttackListeners();
   document.querySelector(".notif-left").innerHTML =
-    '<h2 class="notif instruction">Game Over!</h2>';
+    '<h2 class="notif instruction">Game Over! Click refresh to play again.</h2>';
   document.querySelector(
     ".notif-right"
   ).innerHTML = `<h2 class="notif instruction">${message}</h2>`;
@@ -289,7 +294,6 @@ export function startGame() {
 let dragStorage = "test";
 
 export function getPlayerMove() {
-  // provide the player with some sort of prompt. for now, console
   addNotif("Your move! Please attack an enemy square by clicking.", 1);
 }
 
@@ -435,6 +439,7 @@ const iface = new Interface();
 
 const addNotif = iface.addNotif.bind(iface);
 const bindAddAttackListeners = iface.addAttackListeners.bind(iface);
+const bindRemoveAttackListeners = iface.removeAttackListeners.bind(iface);
 
 function markSquare(square) {
   const mark = iface.markSquareHit.bind(iface);

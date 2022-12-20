@@ -85,7 +85,7 @@ class Controller {
     if (this.gameOver === true) {
       return;
     }
-    if (whoseTurn === 1) {
+    if (whoseTurn === 1 && this.gameOver === false) {
       // prompt player for a move
       pubSub.pub("getPlayersMove", iface.getPlayerMove);
     } else {
@@ -139,7 +139,7 @@ class Controller {
       // change the below to use pub/sub too
       pubSub.pub("sunk", true);
     } else if (result === "gameOver") {
-      resultArray.push(true, false);
+      resultArray.push(true, false, true);
       pubSub.pub("markSquareHit", resultArray);
       this.gameOver = true;
       pubSub.pub("gameOver", "You win");
@@ -324,8 +324,10 @@ class Controller {
       resultArray.push(true, true);
       pubSub.pub("sunk", false);
     } else if (result === "gameOver") {
+      resultArray.push(true, true, true);
       pubSub.pub("gameOver", "The computer wins!");
       this.gameOver = true;
+      pubSub.pub("markSquareHit", resultArray);
     }
 
     if (result !== false) {
