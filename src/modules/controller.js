@@ -65,6 +65,7 @@ class Controller {
     this.secondCpuHit = null;
     this.lastHit = null;
     this.probableShipDirection = null;
+    //this.attacksSinceHit = 0;
   }
 
   returnBoards() {
@@ -221,12 +222,14 @@ class Controller {
   }
 
   getCPUMove() {
+    /*if (this.cpuHit) {
+      this.attacksSinceHit += 1;
+    }*/
+
     let move = this.players.cpu.attack();
 
     if (this.secondCpuHit && !this.probableShipDirection) {
-      if (!this.probableShipDirection) {
-        this.probableShipDirection = this.getProbableShipDirection();
-      }
+      this.probableShipDirection = this.getProbableShipDirection();
     }
 
     if (this.probableShipDirection) {
@@ -282,9 +285,16 @@ class Controller {
     resultArray.push(move[0], move[1]);
     if (result === "hit") {
       resultArray.push(true, true);
-      if (this.cpuHit && !this.secondCpuHit) {
+
+      if (this.cpuHit && !this.secondCpuHit && !this.probableShipDirection) {
         this.secondCpuHit = [move[0], move[1]];
       }
+
+      if (!this.cpuHit) {
+        this.cpuHit = [move[0], move[1]];
+      }
+
+      
       this.lastHit = [move[0], move[1]];
     } else if (result === "miss") {
       resultArray.push(false, true);
@@ -310,6 +320,7 @@ class Controller {
       this.secondCpuHit = null;
       this.probableShipDirection = null;
       this.lastHit = null;
+      //this.attacksSinceHit = 0;
       resultArray.push(true, true);
       pubSub.pub("sunk", false);
     } else if (result === "gameOver") {
