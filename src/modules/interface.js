@@ -1,5 +1,5 @@
+/* eslint-disable no-use-before-define */
 
-/* eslint-disable no-sequences */
 import { componentFactory } from "./componentFactory";
 import { displayObjects, ships } from "./displayObjects";
 import Cruiser from "../resources/Cruiser.png";
@@ -10,7 +10,7 @@ import Explosion from "../resources/explosion.mp3";
 import Laser from "../resources/laser.mp3";
 import Music from "../resources/music.mp3";
 import Sunk from "../resources/sunk.mp3";
-import { pubSub } from "./controller";
+import { pubSub } from "./pubSub";
 
 class Interface {
   constructor() {
@@ -244,8 +244,6 @@ export function shipsPlaced() {
     "Ships placed! Click start to begin!";
 }
 
-
-
 export function cpuAttack() {
   let successfulAttack = false;
   while (!successfulAttack) {
@@ -376,15 +374,9 @@ export function gameOver(message) {
   ).innerHTML = `<h2 class="notif instruction">${message}</h2>`;
 }
 
-
-
-
-
 export function getPlayerMove() {
   addNotif("Your move! Please attack an enemy square by clicking.", 1);
 }
-
-
 
 export function addDragListeners() {
   const draggables = document.querySelectorAll(".draggable");
@@ -421,8 +413,6 @@ export function buildShipPlacement() {
 // Get the DOM nodes' info for the first screen from displayObjects
 // and draws them
 
-
-
 export function buildInterface() {
   for (let i = 0; i < displayObjects.length - 1; i += 1) {
     const element = displayObjects[i];
@@ -441,8 +431,6 @@ export function buildInterface() {
     '<h2 class="notif notif-human">Welcome to Battleship! Click Start to place your ships!</h2>';
 }
 
-
-
 export function getTime() {
   const date = new Date();
   const hours = date.getHours();
@@ -453,8 +441,6 @@ export function getTime() {
   const seconds = date.getSeconds();
   return `${hours}:${minutes}:${seconds}`;
 }
-
-
 
 const addNotif = iface.addNotif.bind(iface);
 
