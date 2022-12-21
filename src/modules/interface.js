@@ -5,6 +5,10 @@ import Cruiser from "../resources/Cruiser.png";
 import Battleship from "../resources/Battleship.png";
 import Destroyer from "../resources/Destroyer.png";
 import Frigate from "../resources/Frigate.png";
+import Explosion from "../resources/explosion.mp3";
+import Laser from "../resources/laser.mp3";
+import Music from "../resources/music.mp3";
+import Sunk from "../resources/sunk.mp3";
 import { pubSub } from "./controller";
 
 export function buildGrid(player) {
@@ -178,6 +182,7 @@ export function removeAttackListeners() {
 }
 
 export function sunk(isPlayerBoard) {
+  playSound(3);
   if (!isPlayerBoard) {
     addNotif("The computer sunk your ship!", 2);
   } else {
@@ -214,6 +219,20 @@ export function updateNotsDisplay() {
   rightNotifs.innerHTML = rightResult;
 }
 
+const explosion = new Audio(Explosion);
+const laser = new Audio(Laser);
+const shipSunk = new Audio(Sunk);
+
+function playSound(sound) {
+  if (sound === 1) {
+    explosion.play();
+  } else if (sound === 2) {
+    laser.play();
+  } else {
+    shipSunk.play();
+  }
+}
+
 export function markSquareHit(array) {
   let square;
   const x = array[0];
@@ -228,9 +247,11 @@ export function markSquareHit(array) {
       if (isOccupied) {
         square.classList.add("hit-occupied");
         addNotif("The computer hit your ship!", 2);
+        playSound(1);
       } else {
         square.classList.add("hit-empty");
         addNotif("The computer hit an empty square!", 2);
+        playSound(2);
       }
     } else {
       square = document.querySelector(`.cpu-grid-square-${x}-${y}`);
@@ -341,6 +362,10 @@ export function buildShipPlacement() {
   // Sends the player a message to place ships
   document.querySelector(".notif-left").innerHTML =
     '<h2 class="notif human-notif">Drag and drop to place your ships! Click its left square to rotate a placed ship.</h2>';
+
+  // Plays the music
+  const music = new Audio(Music);
+  music.play();
 }
 
 // Get the DOM nodes' info for the first screen from displayObjects
