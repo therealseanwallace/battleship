@@ -112,15 +112,6 @@ export const displayObjects = [
     class2: "ship-container",
   },
   {
-    name: "startButton",
-    nodeType: "input",
-    parent: ".game-container",
-    class1: "start-button",
-    class2: "button",
-    inputType: "button",
-    value: "START",
-  },
-  {
     name: "toggleSound",
     nodeType: "input",
     parent: ".game-container",
@@ -128,6 +119,15 @@ export const displayObjects = [
     class2: "button",
     inputType: "button",
     value: "TURN SOUND ON",
+  },
+  {
+    name: "startButton",
+    nodeType: "input",
+    parent: ".game-container",
+    class1: "start-button",
+    class2: "button",
+    inputType: "button",
+    value: "START",
   },
   {
     name: "placementGridSquare",
