@@ -2,7 +2,7 @@
 
 @font-face {
   font-family: "Retro";
-  src: url("./retro.woff2") format("woff2");
+  src: url("../resources/retro.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
 }
