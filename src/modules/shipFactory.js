@@ -7,7 +7,7 @@ export const shipFactory = (() => {
     let type;
     let length;
     let hp;
-    let sunk = false;
+    const sunk = false;
     switch (shipType) {
       case 1:
         type = "Sink test";
