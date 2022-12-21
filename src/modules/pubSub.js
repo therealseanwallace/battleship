@@ -1,6 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable consistent-return */
-
 class Topic {
   constructor(topic) {
     this.subscribers = [];

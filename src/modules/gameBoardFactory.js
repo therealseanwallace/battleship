@@ -1,11 +1,9 @@
-/* eslint-disable no-use-before-define */
-/* eslint-disable no-param-reassign */
 import { shipFactory } from "./shipFactory";
 
 class Square {
   constructor(x, y) {
-    x = x || 0; // converts falsey values to 0 (in this case, NaN)
-    this.xy = [x, y];
+    const thisX = x || 0; // converts falsey values to 0 (in this case, NaN)
+    this.xy = [thisX, y];
     this.occupant = null;
     this.hit = false;
   }

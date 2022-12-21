@@ -1,5 +1,3 @@
-/* eslint-disable no-use-before-define */
-
 import { playerFactory } from "./playerFactory";
 import * as iface from "./interface";
 import { pubSub } from "./pubSub";
