@@ -112,15 +112,6 @@ export const displayObjects = [
     class2: "ship-container",
   },
   {
-    name: "toggleSound",
-    nodeType: "input",
-    parent: ".game-container",
-    class1: "toggle-sound",
-    class2: "button",
-    inputType: "button",
-    value: "TURN SOUND ON",
-  },
-  {
     name: "startButton",
     nodeType: "input",
     parent: ".game-container",

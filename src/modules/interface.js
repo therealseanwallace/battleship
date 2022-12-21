@@ -48,52 +48,12 @@ class Interface {
     }
     this.updateNotsDisplay();
   }
-
-  toggleSound() {
-    const toggleSound = document.querySelector(".toggle-sound");
-    if (this.soundOn === false) {
-      this.soundOn = true;
-      enableSound();
-      toggleSound.value = "TURN SOUND OFF";
-    } else {
-      this.soundOn = false;
-      disableSound();
-      toggleSound.value = "TURN SOUND ON";
-    }
-  }
 }
 
 const iface = new Interface();
-
-let explosion;
-let laser;
-let shipSunk;
-let music;
-
-function disableSound() {
-  music.pause();
-  laser = null;
-  explosion = null;
-  shipSunk = null;
-}
-
-function enableSound() {
-  explosion = new Audio(Explosion);
-  laser = new Audio(Laser);
-  shipSunk = new Audio(Sunk);
-  music = new Audio(Music);
-
-  // play the music on loop
-  music.addEventListener(
-    "ended",
-    () => {
-      this.currentTime = 0;
-      this.play();
-    },
-    false
-  );
-  music.play();
-}
+const explosion = new Audio(Explosion);
+const laser = new Audio(Laser);
+const shipSunk = new Audio(Sunk);
 
 function playSound(sound) {
   if (sound === 1) {
@@ -442,6 +402,10 @@ export function buildShipPlacement() {
   // Sends the player a message to place ships
   document.querySelector(".notif-left").innerHTML =
     '<h2 class="notif human-notif">Drag and drop to place your ships! Click its left square to rotate a placed ship.</h2>';
+
+  // Plays the music
+  const music = new Audio(Music);
+  music.play();
 }
 
 // Get the DOM nodes' info for the first screen from displayObjects
