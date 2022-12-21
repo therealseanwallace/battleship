@@ -167,7 +167,7 @@ function deleteShip(ID) {
   // loops through this.shipArray. upon finding ship with the given ID,
   // deletes it
 
-  pubSub.pub("decrementPlacedCount", 1);
+  // pubSub.pub("decrementPlacedCount", 1);
   for (let i = 0; i < this.shipArray.length; i += 1) {
     if (this.shipArray[i].shipID === ID) {
       this.shipArray.splice(i, 1);
@@ -182,130 +182,66 @@ function rotateShipinStorage(shipData) {
 
   const x = Number(shipData[0]);
   const y = Number(shipData[1]);
-  const dir = Number(shipData[2]);
+  let dir = Number(shipData[2]);
   const length = Number(shipData[3]);
+
 
   // if there is a ship, remove it from the board
   if (ship !== undefined) {
     this.deleteShip(shipID);
     const { direction } = ship;
 
-    if (direction === 0) {
-      // if the ship is horizontal, clear the board of the ship horizontally
-      for (let i = 0; i < ship.length; i++) {
-        const xElement = this.board[x + i][y];
-
-        xElement.occupant = null;
-      }
-
-      // check that the squares we will place the ship in are not occupied
-      for (let i = 0; i < ship.length; i++) {
-        const yElement = this.board[x][y - i];
-        if (yElement.occupant !== null) {
-          return false;
-        }
-      }
-
-      // having removed the ship, place it with the new direction
-    } else {
-      // else clear the board of the ship vertically
-      for (let i = 0; i < ship.length; i++) {
-        const yElement = this.board[x][y - i];
-
-        yElement.occupant = null;
-      }
-
-      // check that the squares we will place the ship in are not occupied
-      for (let i = 0; i < ship.length; i++) {
-        if (!this.board[x + i]) {
-          return false;
-        }
-        const xElement = this.board[x + i][y];
-        if (xElement.occupant !== null) {
-          return false;
-        }
-      }
-    }
-  }
-  // having removed the ship, replace it with the new direction and return result
-  return this.placeShipOnBoard(x, y, dir, length, shipID);
-
-  /*
-  // find the ship at the given coordinates and get its direction
-  console.log("rotating ship! this.board[x][y] is", this.board[shipData[0]][shipData[1]]);
-  console.log('**** shipData is', shipData);
-  
-
-  let result;
-
-  try {
-    console.log('trying to rotate ship');
-    console.log('this.board[x][y].occupant is', this.board[shipData[0]][shipData[1]].occupant);
-    const shipID = this.board[shipData[0]][shipData[1]].occupant;
-    console.log("shipID is", shipID);
-    const ship = this.getShip(this.board[x][y].occupant);
-    console.log("got ship! ship is", ship);
-    const dir = ship.direction;
-
-    // delete the ship from shipArray
-    console.log("rotating ship! this is", this);
-    this.deleteShip(shipID);
-
     if (dir === 0) {
       // if the ship is horizontal, clear the board of the ship horizontally
+      console.log('ship is horizontal!')
       for (let i = 0; i < ship.length; i++) {
         const xElement = this.board[x + i][y];
-        console.log("clearing squares! xElement.occupant =", xElement);
+
         xElement.occupant = null;
-        console.log("cleared square! xElement.occupant =", xElement);
       }
 
       // check that the squares we will place the ship in are not occupied
       for (let i = 0; i < ship.length; i++) {
         const yElement = this.board[x][y - i];
         if (yElement.occupant !== null) {
-          console.log("yElement is ", yElement);
-          console.log("yElement.occupant is ", yElement.occupant, "not null");
           return false;
         }
       }
 
       // having removed the ship, place it with the new direction
-      result = this.placeShipOnBoard(x, y, 1, ship.length, shipID);
     } else {
       // else clear the board of the ship vertically
+      console.log('ship is vertical!');
       for (let i = 0; i < ship.length; i++) {
         const yElement = this.board[x][y - i];
-        console.log("clearing squares! yElement.occupant =", yElement.occupant);
+
         yElement.occupant = null;
-        console.log("cleared square! yElement.occupant =", yElement.occupant);
       }
 
       // check that the squares we will place the ship in are not occupied
       for (let i = 0; i < ship.length; i++) {
         if (!this.board[x + i]) {
-          console.log("x+i is not valid");
           return false;
         }
         const xElement = this.board[x + i][y];
         if (xElement.occupant !== null) {
-          console.log("xElement is ", xElement);
-          console.log("xElement.occupant is ", xElement.occupant, "not null");
           return false;
         }
       }
-
-      // having removed the ship, replace it with the new direction
     }
-    result = this.placeShipOnBoard(x, y, 0, ship.length, shipID);
-  } catch {
-    result = this.placeShipOnBoard(shipData[0], shipData[1], shipData[2], shipData[3]);
   }
-  return result;*/
+  
+  // flip the direction
+  if (dir === 0) { dir = 1; } else { dir = 0; };
+
+  // having removed the ship, replace it with the new direction and return result
+  const result = this.placeShipOnBoard(x, y, dir, length, shipID);
+  return result;
 }
 
 function moveShipInStorage(x, y, direction, length) {
-  // find the ship at the given coordinates and get its direction
+
+    // find the ship at the given coordinates and get its direction
   const shipID = this.board[x][y].occupant;
   const ship = this.getShip(this.board[x][y].occupant);
 
@@ -333,8 +269,6 @@ function moveShipInStorage(x, y, direction, length) {
       yElement.occupant = null;
     }
   }
-
-  // place the ship on the board
 }
 
 class Board {
@@ -363,6 +297,7 @@ class Square {
   }
 
   placeShipOnSquare(shipID) {
+    console.log('placing ship on square! this is', this);
     this.occupant = shipID;
   }
 }

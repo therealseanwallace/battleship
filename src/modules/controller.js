@@ -193,15 +193,15 @@ class Controller {
     const y2 = this.secondCpuHit[1];
     if (x1 === x2) {
       if (y2 > y1) {
-        dir = 0;
-      } else {
-        dir = 2;
-      }
-    } else {
-      if (x2 > x1) {
         dir = 1;
       } else {
         dir = 3;
+      }
+    } else {
+      if (x2 > x1) {
+        dir = 2;
+      } else {
+        dir = 4;
       }
     }
 
@@ -210,11 +210,11 @@ class Controller {
 
   getAdjacentSquareByDirection(x, y, dir) {
     switch (dir) {
-      case 0:
-        return [x, y + 1];
       case 1:
-        return [x + 1, y];
+        return [x, y + 1];
       case 2:
+        return [x + 1, y];
+      case 3:
         return [x, y - 1];
       default:
         return [x - 1, y];
@@ -227,21 +227,17 @@ class Controller {
     }*/
 
     let move = this.players.cpu.attack();
-
+       // we can't compare probablyShipDirection like this as long as
+       // it's a number, because 0 is falsy. this is probably
+       // the source of the error. consider changing probablyShipDirection
+       // to using 1, 2, 3, 4 instead of 0, 1, 2, 3
+       
     if (this.secondCpuHit && !this.probableShipDirection) {
       this.probableShipDirection = this.getProbableShipDirection();
     }
 
     if (this.probableShipDirection) {
       switch (this.probableShipDirection) {
-        case 0:
-          move = this.getAdjacentSquareByDirection(
-            this.lastHit[0],
-            this.lastHit[1],
-            0
-          );
-          break;
-
         case 1:
           move = this.getAdjacentSquareByDirection(
             this.lastHit[0],
@@ -258,11 +254,19 @@ class Controller {
           );
           break;
 
-        default:
+        case 3:
           move = this.getAdjacentSquareByDirection(
             this.lastHit[0],
             this.lastHit[1],
             3
+          );
+          break;
+
+        default:
+          move = this.getAdjacentSquareByDirection(
+            this.lastHit[0],
+            this.lastHit[1],
+            4
           );
           break;
       }
@@ -294,7 +298,6 @@ class Controller {
         this.cpuHit = [move[0], move[1]];
       }
 
-      
       this.lastHit = [move[0], move[1]];
     } else if (result === "miss") {
       resultArray.push(false, true);
@@ -351,14 +354,16 @@ class Controller {
   }
 
   rotateShip(shipData) {
+    this.decrementPlacedCount();
     const result = this.players.human.board.rotateShipinStorage(shipData);
 
     if (result !== false) {
-      this.shipPlaced(result);
+      this.shipPlaced();
     }
   }
 
   moveShip(details) {
+    this.decrementPlacedCount();
     this.players.human.board.moveShipInStorage(
       details[0],
       details[1],
