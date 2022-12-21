@@ -250,7 +250,8 @@ main {
   max-width: 100vw;
   filter: drop-shadow(0 0 0.1px #00ff5e)
     contrast(2) brightness(1);
-    
+  z-index: 999999;
+  position: absolute;
   
 }
 
@@ -258,8 +259,8 @@ main {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(2, 1fr);
-  grid-column-gap: 0px;
-  grid-row-gap: 0px;
+  grid-column-gap: 100px;
+
   width: 400px;
   height: 120px;
 }
