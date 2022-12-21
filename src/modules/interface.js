@@ -1,6 +1,7 @@
-/* eslint-disable no-sequences */
+/* eslint-disable no-use-before-define */
+
 import { componentFactory } from "./componentFactory";
-import { displayObjects, shipPlacement, ships, cpu } from "./displayObjects";
+import { displayObjects, ships } from "./displayObjects";
 import Cruiser from "../resources/Cruiser.png";
 import Battleship from "../resources/Battleship.png";
 import Destroyer from "../resources/Destroyer.png";
@@ -9,26 +10,63 @@ import Explosion from "../resources/explosion.mp3";
 import Laser from "../resources/laser.mp3";
 import Music from "../resources/music.mp3";
 import Sunk from "../resources/sunk.mp3";
-import { pubSub } from "./controller";
+import { pubSub } from "./pubSub";
+
+class Interface {
+  constructor() {
+    this.componentFactory = componentFactory;
+    this.buildGrid = buildGrid;
+    this.buildShips = buildShips;
+    this.rotateShip = rotateShip;
+    this.cpuAttack = cpuAttack;
+    this.removeAttackListeners = removeAttackListeners;
+    this.attack = attack;
+    this.addAttackListeners = addAttackListeners;
+    this.markSquareHit = markSquareHit;
+    this.startGame = startGame;
+    this.drop = drop;
+    this.addDragListeners = addDragListeners;
+    this.allowDrop = allowDrop;
+    this.buildInterface = buildInterface;
+    this.instructions = [];
+    this.gameNots = [];
+    this.updateNotsDisplay = updateNotsDisplay;
+    this.markSquare = markSquare;
+  }
+
+  addNotif(notif, player) {
+    const notifWithTimestamp = `${getTime()}: ${notif}`;
+    if (player === 1) {
+      if (this.instructions.length > 1) {
+        this.instructions.shift();
+      }
+      this.instructions.push(notifWithTimestamp);
+    } else {
+      if (this.gameNots.length > 1) {
+        this.gameNots.shift();
+      }
+      this.gameNots.push(notifWithTimestamp);
+    }
+    this.updateNotsDisplay();
+  }
+}
+
+const iface = new Interface();
 
 export function buildGrid(player) {
   let sqNum = 0;
-  let humanSqNum = 0;
-  let cpuSqNum = 0;
-  for (let i = 9; i > -1; i--) {
-    for (let j = 0; j < 10; j++) {
+  for (let i = 9; i > -1; i -= 1) {
+    for (let j = 0; j < 10; j += 1) {
       const newSquare = displayObjects[displayObjects.length - 1];
       newSquare.xy = [j, i, sqNum, player];
       sqNum += 1;
       if (player === 1) {
         newSquare.class2 = "player-grid-square";
         newSquare.class3 = `player-grid-square-${j}-${i}`;
-        humanSqNum += 1;
       } else {
         newSquare.class2 = "cpu-grid-square";
         newSquare.parent = ".cpu-board";
         newSquare.class3 = `cpu-grid-square-${j}-${i}`;
-        cpuSqNum += 1;
       }
       componentFactory(newSquare);
     }
@@ -64,13 +102,6 @@ export function buildShips() {
   }
 }
 
-export function shipsPlaced() {
-  const startButton = document.querySelector(".start-button");
-  startButton.addEventListener("click", startGame);
-  document.querySelector(".notif-left").innerHTML =
-    "Ships placed! Click start to begin!";
-}
-
 export function rotateShip(e) {
   const xy = [
     e.target.parentElement.dataset.x,
@@ -82,9 +113,6 @@ export function rotateShip(e) {
 
   pubSub.pub("rotateShip", xy);
 
-  const parent = ship.parentNode;
-  const parentX = Number(parent.dataset.x);
-  const parentY = Number(parent.dataset.y);
   switch (Number(e.target.dataset.length)) {
     case 6:
       if (ship.dataset.direction === "0") {
@@ -135,6 +163,87 @@ export function rotateShip(e) {
   }
 }
 
+let dragStorage = "test";
+
+export function drag(e) {
+  dragStorage = e.target;
+
+  if (e.target.parentElement.classList.contains("placement-grid-square")) {
+    const x = Number(e.target.parentElement.dataset.x);
+    const y = Number(e.target.parentElement.dataset.y);
+    const result = [
+      x,
+      y,
+      Number(e.target.dataset.direction),
+      Number(e.target.dataset.length),
+    ];
+    pubSub.pub("moveShip", result);
+  }
+  e.dataTransfer.setData("img", e.target.id);
+}
+
+export function drop(e) {
+  e.preventDefault();
+  const data = e.dataTransfer.getData("img");
+
+  e.target.appendChild(document.getElementById(data));
+
+  pubSub.pub("placeShip", [
+    Number(e.target.dataset.x),
+    Number(e.target.dataset.y),
+    Number(dragStorage.dataset.direction),
+    Number(dragStorage.dataset.length),
+  ]);
+
+  document
+    .querySelector(`#${dragStorage.id}`)
+    .addEventListener("click", rotateShip);
+}
+
+export function allowDrop(e) {
+  e.preventDefault();
+}
+
+const bindAddAttackListeners = iface.addAttackListeners.bind(iface);
+
+export function startGame() {
+  // clear the notification area
+  document.querySelector(".notif-left").innerHTML = "";
+
+  // tell the controller to start the game
+  pubSub.pub("gameStart", "true");
+
+  // remove ship-rotation event listeners
+  const draggables = document.querySelectorAll(".draggable");
+  for (let i = 0; i < draggables.length; i += 1) {
+    const element = draggables[i];
+    element.removeEventListener("click", rotateShip);
+    element.removeEventListener("dragstart", drag);
+  }
+
+  // remove drop event listeners
+  const squares = document.querySelectorAll(".placement-grid-square");
+
+  for (let i = 0; i < squares.length; i += 1) {
+    const element = squares[i];
+    element.removeEventListener("drop", drop);
+    element.removeEventListener("dragover", allowDrop);
+  }
+
+  // remove start button
+  document.querySelector(".start-button").remove();
+
+  // add the attack event listeners to the cpu board
+  bindAddAttackListeners();
+}
+
+export function shipsPlaced() {
+  const startButton = document.querySelector(".start-button");
+  startButton.addEventListener("click", startGame);
+  document.querySelector(".notif-left").innerHTML =
+    "Ships placed! Click start to begin!";
+}
+
 export function cpuAttack() {
   let successfulAttack = false;
   while (!successfulAttack) {
@@ -151,17 +260,6 @@ function attack(e) {
   pubSub.pub("playersMove", [x, y]);
 }
 
-/*export function miss(move, player) {
-  console.log('miss! check square')
-  if (player === 1) { 
-    const square = document.querySelector(`.cpu-grid-square-${move[0]}-${move[1]}`);
-    square.classList.add("miss");
-  } else {
-    const square = document.querySelector(`.player-grid-square-${move[0]}-${move[1]}`);
-    square.classList.add("miss");
-  }
-}*/
-
 const abortController = new AbortController();
 const { signal } = abortController;
 
@@ -174,11 +272,6 @@ export function addAttackListeners() {
 
 export function removeAttackListeners() {
   abortController.abort();
-  /*const squares = document.querySelectorAll(".cpu-grid-square");
-  for (let i = 0; i < squares.length; i++) {
-    const element = squares[i];
-    element.removeEventListener("click", attack);
-  }*/
 }
 
 export function sunk(isPlayerBoard) {
@@ -207,10 +300,10 @@ export function updateNotsDisplay() {
   const { instructions, gameNots } = this;
 
   // assemble the html for the notifications
-  for (let i = 0; i < instructions.length; i++) {
+  for (let i = 0; i < instructions.length; i += 1) {
     leftResult += `<h3 class="notif instruction">${instructions[i]}</h3>`;
   }
-  for (let i = 0; i < gameNots.length; i++) {
+  for (let i = 0; i < gameNots.length; i += 1) {
     rightResult += `<h3 class="notif cpu-notif">${gameNots[i]}</h3>`;
   }
 
@@ -281,72 +374,21 @@ export function gameOver(message) {
   ).innerHTML = `<h2 class="notif instruction">${message}</h2>`;
 }
 
-export function startGame() {
-  // clear the notification area
-  document.querySelector(".notif-left").innerHTML = "";
-
-  // tell the controller to start the game
-  pubSub.pub("gameStart", "true");
-
-  // remove ship-rotation event listeners
-  const draggables = document.querySelectorAll(".draggable");
-  for (let index = 0; index < draggables.length; index++) {
-    const element = draggables[index];
-    element.removeEventListener("click", rotateShip);
-    element.removeEventListener("dragstart", drag);
-  }
-
-  // remove drop event listeners
-  const squares = document.querySelectorAll(".placement-grid-square");
-
-  for (let i = 0; i < squares.length; i++) {
-    const element = squares[i];
-    element.removeEventListener("drop", drop);
-    element.removeEventListener("dragover", allowDrop);
-  }
-
-  // remove start button
-  document.querySelector(".start-button").remove();
-
-  // add the attack event listeners to the cpu board
-  bindAddAttackListeners();
-}
-
-let dragStorage = "test";
-
 export function getPlayerMove() {
   addNotif("Your move! Please attack an enemy square by clicking.", 1);
-}
-
-export function drop(e) {
-  e.preventDefault();
-  const data = e.dataTransfer.getData("img");
-
-  e.target.appendChild(document.getElementById(data));
-
-  pubSub.pub("placeShip", [
-    Number(e.target.dataset.x),
-    Number(e.target.dataset.y),
-    Number(dragStorage.dataset.direction),
-    Number(dragStorage.dataset.length),
-  ]);
-
-  document
-    .querySelector(`#${dragStorage.id}`)
-    .addEventListener("click", rotateShip);
 }
 
 export function addDragListeners() {
   const draggables = document.querySelectorAll(".draggable");
 
-  for (let i = 0; i < draggables.length; i++) {
+  for (let i = 0; i < draggables.length; i += 1) {
     const element = draggables[i];
 
     element.addEventListener("dragstart", drag);
   }
   const squares = document.querySelectorAll(".placement-grid-square");
 
-  for (let i = 0; i < squares.length; i++) {
+  for (let i = 0; i < squares.length; i += 1) {
     const element = squares[i];
     element.addEventListener("drop", drop);
     element.addEventListener("dragover", allowDrop);
@@ -371,12 +413,8 @@ export function buildShipPlacement() {
 // Get the DOM nodes' info for the first screen from displayObjects
 // and draws them
 
-export function allowDrop(e) {
-  e.preventDefault();
-}
-
 export function buildInterface() {
-  for (let i = 0; i < displayObjects.length - 1; i++) {
+  for (let i = 0; i < displayObjects.length - 1; i += 1) {
     const element = displayObjects[i];
     componentFactory(element);
   }
@@ -393,23 +431,6 @@ export function buildInterface() {
     '<h2 class="notif notif-human">Welcome to Battleship! Click Start to place your ships!</h2>';
 }
 
-export function drag(e) {
-  dragStorage = e.target;
-
-  if (e.target.parentElement.classList.contains("placement-grid-square")) {
-    const x = Number(e.target.parentElement.dataset.x);
-    const y = Number(e.target.parentElement.dataset.y);
-    const result = [
-      x,
-      y,
-      Number(e.target.dataset.direction),
-      Number(e.target.dataset.length),
-    ];
-    pubSub.pub("moveShip", result);
-  }
-  e.dataTransfer.setData("img", e.target.id);
-}
-
 export function getTime() {
   const date = new Date();
   const hours = date.getHours();
@@ -421,49 +442,8 @@ export function getTime() {
   return `${hours}:${minutes}:${seconds}`;
 }
 
-class Interface {
-  constructor() {
-    this.componentFactory = componentFactory;
-    this.buildGrid = buildGrid;
-    this.buildShips = buildShips;
-    this.rotateShip = rotateShip;
-    this.cpuAttack = cpuAttack;
-    this.removeAttackListeners = removeAttackListeners;
-    this.attack = attack;
-    this.addAttackListeners = addAttackListeners;
-    this.markSquareHit = markSquareHit;
-    this.startGame = startGame;
-    this.drop = drop;
-    this.addDragListeners = addDragListeners;
-    this.allowDrop = allowDrop;
-    this.buildInterface = buildInterface;
-    this.instructions = [];
-    this.gameNots = [];
-    this.updateNotsDisplay = updateNotsDisplay;
-    this.markSquare = markSquare;
-  }
-
-  addNotif(notif, player) {
-    const notifWithTimestamp = `${getTime()}: ${notif}`;
-    if (player === 1) {
-      if (this.instructions.length > 1) {
-        this.instructions.shift();
-      }
-      this.instructions.push(notifWithTimestamp);
-    } else {
-      if (this.gameNots.length > 1) {
-        this.gameNots.shift();
-      }
-      this.gameNots.push(notifWithTimestamp);
-    }
-    this.updateNotsDisplay();
-  }
-}
-
-const iface = new Interface();
-
 const addNotif = iface.addNotif.bind(iface);
-const bindAddAttackListeners = iface.addAttackListeners.bind(iface);
+
 const bindRemoveAttackListeners = iface.removeAttackListeners.bind(iface);
 
 function markSquare(square) {

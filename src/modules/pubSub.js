@@ -4,16 +4,14 @@ class Topic {
   }
 }
 
-export default class PubSub {
-  constructor() {
-    this.topics = {};
-  }
-
+class PubSub {
   sub(topic, subscriber) {
     if (typeof subscriber !== "function") {
       return `${typeof subscriber} is not a valid argument for subscribers`;
     }
-    this[topic] = new Topic;
+    if (!this[topic]) {
+      this[topic] = new Topic();
+    }
     this[topic].subscribers.push(subscriber);
   }
 
@@ -29,7 +27,6 @@ export default class PubSub {
   }
 
   pub(topic, payload) {
-    
     this[topic].subscribers.forEach((sub) => sub(payload));
   }
 
@@ -39,3 +36,6 @@ export default class PubSub {
     return result;
   }
 }
+
+export const pubSub = new PubSub();
+

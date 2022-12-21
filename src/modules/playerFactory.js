@@ -1,4 +1,4 @@
-import { playerBoard, cpuBoard } from "./GameBoardFactory";
+import { playerBoard, cpuBoard } from "./gameBoardFactory";
 
 export const playerFactory = () => {
   const innerPlayerFactory = (type) => {
