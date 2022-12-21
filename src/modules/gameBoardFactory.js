@@ -1,5 +1,6 @@
 /* eslint-disable no-use-before-define */
-/* eslint-disable no-param-reassign */import { ShipFactory } from "./ShipFactory";
+/* eslint-disable no-param-reassign */
+import { shipFactory } from "./shipFactory";
 
 class Square {
   constructor(x, y) {
@@ -64,7 +65,7 @@ function checkIfSquareExists(x, y) {
 
 function placeShipOnBoard(x, y, horizVert, shipType, ID) {
   // make a new ship according to shipType
-  const newShip = ShipFactory.ShipFactory(shipType);
+  const newShip = shipFactory.shipFactory(shipType);
   newShip.direction = horizVert;
   const newShipLength = newShip.length;
 

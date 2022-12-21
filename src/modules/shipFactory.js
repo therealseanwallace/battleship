@@ -1,7 +1,7 @@
 /* eslint-disable no-shadow */
-export const ShipFactory = (() => {
+export const shipFactory = (() => {
   let shipCounter = -1;
-  const ShipFactory = (shipType) => {
+  const shipFactory = (shipType) => {
     shipCounter += 1;
     const shipID = shipCounter;
     let type;
@@ -58,5 +58,5 @@ export const ShipFactory = (() => {
       },
     };
   };
-  return { ShipFactory };
+  return { shipFactory };
 })();
