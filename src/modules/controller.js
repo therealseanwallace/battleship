@@ -1,8 +1,8 @@
 /* eslint-disable no-use-before-define */
-/* eslint-disable import/no-cycle */
+
 import { playerFactory } from "./playerFactory";
 import * as iface from "./interface";
-import { pubSub } from "./PubSub";
+import { pubSub } from "./pubSub";
 
 const coinFlip = () => Math.floor(Math.random() * 2) + 1;
 
