@@ -303,17 +303,17 @@ class Controller {
       resultArray.push(false, true);
       if (this.probableShipDirection) {
         switch (this.probableShipDirection) {
-          case 0:
-            this.probableShipDirection = 2;
-            break;
           case 1:
             this.probableShipDirection = 3;
             break;
           case 2:
-            this.probableShipDirection = 0;
+            this.probableShipDirection = 4;
+            break;
+          case 3:
+            this.probableShipDirection = 1;
             break;
           default:
-            this.probableShipDirection = 1;
+            this.probableShipDirection = 2;
             break;
         }
         this.lastHit = this.cpuHit;
