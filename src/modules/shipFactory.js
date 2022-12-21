@@ -1,4 +1,3 @@
-/* eslint-disable no-shadow */
 export const shipFactory = (() => {
   let shipCounter = -1;
   const shipFactory = (shipType) => {

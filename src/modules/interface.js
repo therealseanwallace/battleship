@@ -1,5 +1,3 @@
-/* eslint-disable no-use-before-define */
-
 import { componentFactory } from "./componentFactory";
 import { displayObjects, ships } from "./displayObjects";
 import Cruiser from "../resources/Cruiser.png";
@@ -32,6 +30,7 @@ class Interface {
     this.gameNots = [];
     this.updateNotsDisplay = updateNotsDisplay;
     this.markSquare = markSquare;
+    this.soundOn = false;
   }
 
   addNotif(notif, player) {
@@ -49,9 +48,62 @@ class Interface {
     }
     this.updateNotsDisplay();
   }
+
+  toggleSound() {
+    const toggleSound = document.querySelector(".toggle-sound");
+    if (this.soundOn === false) {
+      this.soundOn = true;
+      enableSound();
+      toggleSound.value = "TURN SOUND OFF";
+    } else {
+      this.soundOn = false;
+      disableSound();
+      toggleSound.value = "TURN SOUND ON";
+    }
+  }
 }
 
 const iface = new Interface();
+
+let explosion;
+let laser;
+let shipSunk;
+let music;
+
+function disableSound() {
+  music.pause();
+  laser = null;
+  explosion = null;
+  shipSunk = null;
+}
+
+function enableSound() {
+  explosion = new Audio(Explosion);
+  laser = new Audio(Laser);
+  shipSunk = new Audio(Sunk);
+  music = new Audio(Music);
+
+  // play the music on loop
+  music.addEventListener(
+    "ended",
+    () => {
+      this.currentTime = 0;
+      this.play();
+    },
+    false
+  );
+  music.play();
+}
+
+function playSound(sound) {
+  if (sound === 1) {
+    explosion.play();
+  } else if (sound === 2) {
+    laser.play();
+  } else {
+    shipSunk.play();
+  }
+}
 
 export function buildGrid(player) {
   let sqNum = 0;
@@ -312,20 +364,6 @@ export function updateNotsDisplay() {
   rightNotifs.innerHTML = rightResult;
 }
 
-const explosion = new Audio(Explosion);
-const laser = new Audio(Laser);
-const shipSunk = new Audio(Sunk);
-
-function playSound(sound) {
-  if (sound === 1) {
-    explosion.play();
-  } else if (sound === 2) {
-    laser.play();
-  } else {
-    shipSunk.play();
-  }
-}
-
 export function markSquareHit(array) {
   let square;
   const x = array[0];
@@ -404,10 +442,6 @@ export function buildShipPlacement() {
   // Sends the player a message to place ships
   document.querySelector(".notif-left").innerHTML =
     '<h2 class="notif human-notif">Drag and drop to place your ships! Click its left square to rotate a placed ship.</h2>';
-
-  // Plays the music
-  const music = new Audio(Music);
-  music.play();
 }
 
 // Get the DOM nodes' info for the first screen from displayObjects
@@ -429,6 +463,10 @@ export function buildInterface() {
 
   document.querySelector(".notif-left").innerHTML =
     '<h2 class="notif notif-human">Welcome to Battleship! Click Start to place your ships!</h2>';
+
+  document.querySelector(".toggle-sound").addEventListener("click", () => {
+    iface.toggleSound();
+  });
 }
 
 export function getTime() {
