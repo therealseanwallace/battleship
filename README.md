@@ -13,7 +13,7 @@ Moreover, the cycle of writing tests and making them pass helped me cement the g
 
 ## Acknowledgements
 
-Ship images are a remix of selected vectors from the [Spaceships Silhouettes Set](https://www.freevector.com/spaceships-silhouettes-set) at [freevector.com].
+Ship images are a remix of selected vectors from the [Spaceships Silhouettes Set](https://www.freevector.com/spaceships-silhouettes-set) at [freevector.com](freevector.com).
 
 Game music comes from [Free Music](https://www.youtube.com/@FreeMusicc) on YouTube.
 
