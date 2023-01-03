@@ -1,11 +1,11 @@
-# My React implementation of the classic learner's project, a to-do list.
+# My version of the classic game, Battleship
 
 ## Description
 An assignment I did for The Odin Project. A lot of students find this one tough and I was no different! At first testing felt like it was mostly getting in my way, but by the end of this I developed an understanding of why it's important.
 
 Moreover, the cycle of writing tests and making them pass helped me cement the git workflow in my mind. Before this project, I was making wild commits with huge, sweeping changes. This is maybe the most important thing I picked up with this one, and it's made my work a lot more ordered and maintainable.
 
-# [Live](https://therealseanwallace.github.io/todo)
+# [Live](https://therealseanwallace.github.io/battleship)
     
 ## Learning objectives:
     
